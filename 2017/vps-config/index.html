@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+
+  <title>VPS First Configuration</title>
+  <meta name="description" content="How I would configure my vps for the first time. Instructions on a Debian host.
+">
+  <meta name="author" content="Clément Durand">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="VPS First Configuration">
+  <meta name="twitter:description" content="How I would configure my vps for the first time. Instructions on a Debian host.
+">
+  
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="VPS First Configuration">
+  <meta property="og:description" content="How I would configure my vps for the first time. Instructions on a Debian host.
+">
+
+  <link rel="shortcut icon" href="/images/favicons/favicon.ico">
+  <meta name="msapplication-TileColor" content="#ffc40d">
+  <meta name="msapplication-TileImage" content="/images/favicons/mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://www.neze.fr/2017/vps-config/">
+  <link rel="alternate" type="application/rss+xml" title="Hello there!" href="/feed.xml">
+</head>
+
+
+  <body>
+    <span class="mobile btn-mobile-menu">
+  <i class="fas fa-bars btn-mobile-menu__icon"></i>
+  <!--<i class="far fa-times-circle btn-mobile-close__icon hidden"></i>-->
+</span>
+
+<header class="panel-cover" style="background-image: url(/images/cover.jpg)">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="link to home of Hello there!">
+          <img src="/images/profile.png" class="user-image" alt="My Profile Photo">
+          <h1 class="panel-cover__title panel-title">Hello there!</h1>
+        </a>
+        <hr class="panel-cover__divider">
+        <p class="panel-cover__description">My front to the Worst Wild Web</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary">
+
+        <div class="navigation-wrapper">
+          <nav class="cover-navigation">
+            <ul class="navigation">
+              <li class="navigation__item">
+                <a href="/#blog" title="link to Hello there! blog" class="blog-button">Blog</a>
+              </li>
+            </ul>
+          </nav>
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+              
+              <!-- Keybase -->
+              <li class="navigation__item">
+                <a href="https://keybase.io/neze" title="Keybase" target="_blank">
+                  <i class="fab fa-keybase"></i>
+                  <span class="label">Keybase</span>
+                </a>
+              </li>
+              
+              
+              <!-- PGP Key -->
+              <li class="navigation__item">
+                <a href="https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=index&search=0xef2d00c6caa88d40" title="PGP" target="_blank">
+                  <i class="fas fa-fingerprint"></i>
+                  <span class="label">PGP</span>
+                </a>
+              </li>
+              
+              
+              <!-- Email -->
+              <li class="navigation__item">
+                <a href="mailto:clement@neze.fr" title="Email" target="_blank">
+                  <i class="fas fa-envelope"></i>
+                  <span class="label">Email</span>
+                </a>
+              </li>
+              
+              
+              <!-- RSS -->
+              <li class="navigation__item">
+                <a href="/feed.xml" title="Subscribe" target="_blank">
+                  <i class="fas fa-rss"></i>
+                  <span class="label">RSS</span>
+                </a>
+              </li>
+              
+            </ul>
+          </nav>
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+              
+              <!-- Mastodon -->
+              <li class="navigation__item">
+                <a href="https://framapiaf.org/@neze" title="Mastodon" target="_blank">
+                  <i class="fab fa-mastodon"></i>
+                  <span class="label">Mastodon</span>
+                </a>
+              </li>
+              
+              
+              <!-- Twitter -->
+              <li class="navigation__item">
+                <a href="https://twitter.com/neze_drd" title="Twitter" target="_blank">
+                  <i class="fab fa-twitter"></i>
+                  <span class="label">Twitter</span>
+                </a>
+              </li>
+              
+              
+              <!-- Reddit -->
+              <li class="navigation__item">
+                <a href="https://www.reddit.com/user/neze_drd" title="Reddit" target="_blank">
+                  <i class="fab fa-reddit-alien"></i>
+                  <span class="label">Reddit</span>
+                </a>
+              </li>
+              
+              
+              <!-- Facebook -->
+              <li class="navigation__item">
+                <a href="https://www.facebook.com/SaXw2aK" title="Facebook" target="_blank">
+                  <i class="fab fa-facebook-f"></i>
+                  <span class="label">Facebook</span>
+                </a>
+              </li>
+              
+              
+              <!-- Instagram -->
+              <li class="navigation__item">
+                <a href="https://www.instagram.com/neze_drd" title="Instagram" target="_blank">
+                  <i class="fab fa-instagram"></i>
+                  <span class="label">Instagram</span>
+                </a>
+              </li>
+              
+              
+              <!-- Snapchat -->
+              <li class="navigation__item">
+                <a href="https://www.snapchat.com/add/neze_drd" title="Snapchat" target="_blank">
+                  <i class="fab fa-snapchat-ghost"></i>
+                  <span class="label">Snapchat</span>
+                </a>
+              </li>
+              
+              
+              
+              <!-- LinkedIn -->
+              <li class="navigation__item">
+                <a href="https://www.linkedin.com/in/clement-durand" title="LinkedIn" target="_blank">
+                  <i class="fab fa-linkedin-in"></i>
+                  <span class="label">LinkedIn</span>
+                </a>
+              </li>
+              
+              
+              <!-- Omg.lol -->
+              <li class="navigation__item">
+                <a href="https://neze.omg.lol/" title="Omg.lol" target="_blank">
+                  <i class="far fa-grin-squint-tears"></i>
+                  <span class="label">Omg.lol</span>
+                </a>
+              </li>
+              
+              
+              <!-- Git -->
+              <li class="navigation__item">
+                <a href="https://framagit.org/neze" title="Git" target="_blank">
+                  <i class="fab fa-git-alt"></i>
+                  <span class="label">Git</span>
+                </a>
+              </li>
+              
+              
+              <!-- GitHub -->
+              <li class="navigation__item">
+                <a href="https://www.github.com/w2ak" title="GitHub" target="_blank">
+                  <i class="fab fa-github-alt"></i>
+                  <span class="label">GitHub</span>
+                </a>
+              </li>
+              
+              
+              <!-- Git -->
+              <li class="navigation__item">
+                <a href="https://www.gitlab.com/neze" title="GitLab" target="_blank">
+                  <i class="fab fa-gitlab"></i>
+                  <span class="label">GitLab</span>
+                </a>
+              </li>
+              
+            </ul>
+          </nav>
+        </div>
+
+    </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+      <div class="content-wrapper__inner">
+        <article class="post-container post-container--single">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-11-03 00:00" class="post-meta__date date">3 Nov 2017</time>
+      
+    </div>
+    <h1 class="post-title">VPS First Configuration</h1>
+  </header>
+
+  <section class="post">
+    <p><em>How I would configure my vps for the first time. Instructions on a Debian host.</em></p>
+
+<hr />
+
+<p>I will call my computer <strong><code class="highlighter-rouge">laptop</code></strong>, my server <strong><code class="highlighter-rouge">server</code></strong> at the address
+<strong><code class="highlighter-rouge">example.com</code></strong> with ip <strong><code class="highlighter-rouge">93.184.216.34</code></strong>.
+On both sides my username will be <strong><code class="highlighter-rouge">neze</code></strong>.</p>
+
+<h1 id="initial-setup-of-access">Initial setup of access</h1>
+
+<h2 id="remove-root-ssh-access">Remove root ssh access</h2>
+
+<h3 id="remove-password-root-ssh-access">Remove password root ssh access</h3>
+
+<ul>
+  <li>Create an ssh key on <code class="highlighter-rouge">laptop</code>.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop ~ % ssh-keygen <span class="nt">-t</span> ecdsa <span class="nt">-b</span> 521 <span class="nt">-f</span> ~/.ssh/id_example.com <span class="nt">-C</span> <span class="s2">"neze@laptop"</span>
+<span class="c"># -t: cryptographic algorithm. Values: rsa,ecdsa,ed25519.</span>
+<span class="c"># -b: key size. Values: minimum 1024 for rsa (at least 2048 advised),</span>
+<span class="c">#     256 384 or 521 for ecdsa, no value for ed25519</span>
+</code></pre></div></div>
+
+<p><em>This command will ask for a passphrase. If you do not trust your laptop, choose a strong passphrase.</em></p>
+
+<ul>
+  <li>Configure your laptop to correctly use the ssh key.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop ~ % <span class="nb">cat</span> <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh"> &gt;&gt; ~/.ssh/config
+Host example.com
+    HostName 93.184.216.34
+    IdentityFile ~/.ssh/id_example.com
+</span><span class="no">EOF
+</span></code></pre></div></div>
+
+<ul>
+  <li>Copy the identity file to <code class="highlighter-rouge">root@server</code>.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop ~ % ssh-copy-id <span class="nt">-i</span> ~/.ssh/id_example.com.pub root@example.com
+<span class="c"># -i: Path to the public identity file.</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Check that you can connect to <code class="highlighter-rouge">root@server</code> without password.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop ~ % ssh root@example.com
+</code></pre></div></div>
+
+<p>Keep this shell open until you finish this part.</p>
+
+<ul>
+  <li>Disable password login for root.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % vi /etc/ssh/sshd_config
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gd">-PermitRootLogin yes
+</span><span class="gi">+PermitRootLogin prohibit-password
+</span></code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % systemctl restart ssh.service
+</code></pre></div></div>
+
+<ul>
+  <li>Check in another terminal that you still have access to the server.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop ~ % ssh root@example.com <span class="s2">"echo OK"</span>
+OK
+</code></pre></div></div>
+
+<ul>
+  <li>Check that you do not have password access anymore.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop ~ % ssh <span class="nt">-o</span> <span class="nv">PreferredAuthentications</span><span class="o">=</span>password root@example.com
+root@93.184.216.34 password:
+Permission denied, please try again.
+</code></pre></div></div>
+
+<h3 id="create-your-main-user">Create your main user</h3>
+
+<ul>
+  <li>Create your user.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % adduser neze
+</code></pre></div></div>
+
+<ul>
+  <li>Put the user in the sudo group.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % usermod <span class="nt">-aG</span> <span class="nb">sudo </span>neze
+root@server ~ % <span class="nb">groups </span>neze
+neze: neze <span class="nb">sudo</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Copy your ssh public key to this user on the server.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop ~ % ssh-copy-id <span class="nt">-i</span> ~/.ssh/id_example.com.pub neze@example.com
+neze@93.184.216.34 password:
+</code></pre></div></div>
+
+<ul>
+  <li>Check that you have access to your user’s shell.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop ~ % ssh neze@example.com <span class="s2">"echo OK"</span>
+OK
+</code></pre></div></div>
+
+<ul>
+  <li>Disable root login</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % vi /etc/ssh/sshd_config
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gd">-PermitRootLogin prohibit-password
+</span><span class="gi">+PermitRootLogin no
+</span></code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % systemctl restart ssh.service
+</code></pre></div></div>
+
+<ul>
+  <li>Check that you still have access to your user’s shell.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop ~ % ssh neze@example.com <span class="s2">"echo OK"</span>
+OK
+</code></pre></div></div>
+
+<ul>
+  <li>Maybe completely disable password authentication.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop ~ % ssh neze@example.com
+neze@server ~ % <span class="nb">sudo </span>vi /etc/ssh/sshd_config
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gd">-PasswordAuthentication yes
+</span><span class="gi">+PasswordAuthentication no
+</span></code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@server ~ % <span class="nb">sudo </span>systemctl restart ssh.service
+</code></pre></div></div>
+
+<h2 id="setup-a-basic-firewall">Setup a basic firewall</h2>
+
+<h3 id="block-everything-but-ssh">Block everything but SSH</h3>
+
+<p><em>Be careful with this section.</em></p>
+
+<p><strong>Good to know:</strong> If you do a mistake during firewall setup, a server reboot
+will clean the filters and you will be able to restart the firewall part.</p>
+
+<p>A commented version of the iptables rules is available <a href="https://gist.github.com/w2ak/88cf0aad6cb58cfc0c5083c467eb4619">here</a>.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># The three first lines:</span>
+<span class="c">## Create a temporary directory in /tmp</span>
+<span class="c">## Make sure you own the directory and nobody can write/read in it</span>
+<span class="c">## Empty the directory</span>
+root@server ~ % <span class="nv">D</span><span class="o">=</span><span class="si">$(</span><span class="nb">mktemp</span> <span class="nt">-d</span><span class="si">)</span>
+root@server ~ % <span class="nb">chown</span> <span class="nt">-R</span> root:root <span class="nv">$D</span> <span class="o">&amp;&amp;</span> <span class="nb">chmod</span> <span class="nt">-R</span> 700 <span class="nv">$D</span>
+root@server ~ % find <span class="nv">$D</span> <span class="nt">-mindepth</span> 1 <span class="nt">-delete</span>
+root@server ~ % <span class="nb">cat</span> <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh"> &gt; </span><span class="nv">$D</span><span class="sh">/iptables
+*filter
+:INPUT DROP
+:FORWARD DROP
+:OUTPUT ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -m conntrack --ctstate INVALID -j REJECT --reject-with icmp-host-unreachable
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 22 -j ACCEPT
+-A INPUT -m limit --limit 30/min -j LOG --log-prefix "iptables INPUT denied: " --log-level 7
+-A FORWARD -m limit --limit 30/min -j LOG --log-prefix "iptables FORWARD denied: " --log-level 7
+COMMIT
+</span><span class="no">EOF
+</span>root@server ~ % iptables-apply <span class="nv">$D</span>/iptables
+</code></pre></div></div>
+
+<p>Check that you can still connect to your server and that the output of the
+command <code class="highlighter-rouge">iptables-save</code> does look like what you typed up there.</p>
+
+<p>Do not close this terminal <i class="fa fa-heart"></i></p>
+
+<h3 id="make-these-iptables-permanent">Make these iptables permanent</h3>
+
+<p>You are going to save these iptables, and use a script to automatically apply
+them whenever network interfaces are set up.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % <span class="nb">mkdir </span>firewall
+root@server ~ % <span class="nb">cp</span> <span class="nv">$D</span>/iptables firewall/iptables.rules
+root@server ~ % curl <span class="nt">-Ls</span> <span class="s1">'https://gist.githubusercontent.com/w2ak/88cf0aad6cb58cfc0c5083c467eb4619/raw/2da598837dfa122e8b79b1326b4242b1d88b87af/restore.sh'</span> <span class="o">&gt;</span> firewall/restore.sh
+<span class="c"># It is advised to read and eventually edit restore.sh before making it executable</span>
+root@server ~ % <span class="nb">chmod </span>700 firewall/restore.sh
+root@server ~ % <span class="nb">ln</span> <span class="nt">-s</span> <span class="si">$(</span><span class="nb">pwd</span><span class="si">)</span>/firewall/restore.sh /etc/network/if-pre-up.d/iptables
+</code></pre></div></div>
+
+<p>The script will be downloaded with ‘curl’. It is actually the <code class="highlighter-rouge">restore.sh</code> script
+from <a href="https://gist.github.com/w2ak/88cf0aad6cb58cfc0c5083c467eb4619">this page</a>, which you can also manually download and put on your
+server. If you do so, it will look like this.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># First download 'restore.sh' and know where it is in your laptop</span>
+neze@laptop ~ % scp Downloads/restore.sh neze@example.com:.
+neze@laptop ~ % ssh neze@example.com
+...
+neze@server ~ % <span class="nb">sudo</span> <span class="nt">-s</span>
+root@server ~neze % <span class="nb">cd</span> <span class="o">&amp;&amp;</span> <span class="nb">mkdir </span>firewall
+root@server ~ % <span class="nb">mv</span> ~neze/restore.sh firewall/.
+root@server ~ % <span class="nb">chown </span>root:root firewall/restore.sh
+root@server ~ % <span class="nb">chmod </span>700 firewall/restore.sh
+root@server ~ % <span class="nb">ln</span> <span class="nt">-s</span> <span class="si">$(</span><span class="nb">pwd</span><span class="si">)</span>/firewall/restore.sh /etc/network/if-pre-up.d/iptables
+</code></pre></div></div>
+
+<h1 id="web-server-setup">Web server setup</h1>
+
+<h2 id="install-a-lamp-server">Install a LAMP server</h2>
+
+<p>Get the following software to have a basic LAMP server. If you only want simple
+static pages you can avoid downloading the <code class="highlighter-rouge">php</code> and <code class="highlighter-rouge">mysql</code> related software.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % apt-get install acl apache2 php mysql-server libapache2-mod-php php-mysql
+</code></pre></div></div>
+
+<h2 id="setup-a-basic-static-website">Setup a basic static website</h2>
+
+<h3 id="create-your-tree">Create your tree</h3>
+
+<p><strong>Careful</strong>: try to respect the user that is executing the commands in the following
+example. At first you need to be root, but try to avoid being root when the example
+doesn’t use it.</p>
+
+<p>Create the directory in which you will put your website, then set the correct
+permissions.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Create the directories</span>
+root@server ~ % <span class="nb">mkdir</span> <span class="nt">-p</span> /var/www/example.com/html /var/www/example.com/logs
+<span class="c"># Allow minimum access to /var/www</span>
+root@server ~ % <span class="nb">chmod </span>751 /var /var/www
+<span class="c"># Allow only root access to /var/www/example.com</span>
+root@server ~ % <span class="nb">chmod</span> <span class="nt">-R</span> <span class="nv">u</span><span class="o">=</span>rwX,g<span class="o">=</span>rX,o-rwx /var/www/example.com
+<span class="c"># Allow others to go through /var/www/example.com</span>
+root@server ~ % <span class="nb">chmod </span>o+x /var/www/example.com
+<span class="c"># Add sticky bit (protects ownership) to /var/www/example.com/html</span>
+root@server ~ % <span class="nb">chmod</span> +s /var/www/example.com/html
+<span class="c"># Allow reading access for www-data (the web server user) to /var/www/example.com/html</span>
+root@server ~ % setfacl <span class="nt">-Rm</span> d:u:www-data:r-X,u:www-data:r-X /var/www/example.com/html
+<span class="c"># Allow writing access for my user</span>
+root@server ~ % setfacl <span class="nt">-Rm</span> d:u:neze:rwX,u:neze:rwX /var/www/example.com/html
+</code></pre></div></div>
+
+<p>Create <strong>as your user</strong> (not root) the first html page. <em>Do not create <code class="highlighter-rouge">index.html</code>
+yet, it will allow you to perform a basic check.</em></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@server ~ % vim /var/www/example.com/html/first.html
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gi">+&lt;html&gt;
++  &lt;head&gt;
++    &lt;title&gt;My first page&lt;/title&gt;
++  &lt;/head&gt;
++  &lt;body&gt;
++    &lt;h1&gt;Super beautiful title&lt;/h1&gt;
++    &lt;p&gt;For a super beautiful website.&lt;/p&gt;
++  &lt;/body&gt;
++&lt;/html&gt;
+</span></code></pre></div></div>
+
+<p>Check that the file you just created is owned by the <code class="highlighter-rouge">root</code> group.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@server ~ % <span class="nb">ls</span> <span class="nt">-lah</span> /var/www/example.com/html
+total 12K
+drwsrws---+ 2 root root 4,0K Dec  1 10:04 <span class="nb">.</span>
+drwxrwx---+ 4 root root 4,0K Dec  1 09:50 ..
+<span class="nt">-rw-rw----</span>+ 1 neze root    0 Dec  1 10:04 first.html
+</code></pre></div></div>
+
+<h3 id="configure-the-web-server-to-deliver-the-website">Configure the web server to deliver the website</h3>
+
+<p>Create a basic configuration file for this website.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % vim /etc/apache2/sites-available/example.com.conf
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gi">+&lt;VirtualHost *:80&gt;
++  ServerAdmin neze@example.com
++  ServerName example.com
++  DocumentRoot /var/www/example.com/html
++
++  ErrorLog /var/www/example.com/logs/error.log
++  CustomLog /var/www/example.com/logs/access.log combined
++
++  &lt;Directory /var/www/example.com/html&gt;
++    Options -Indexes -FollowSymLinks
++    DirectoryIndex index.html index.php
++    AllowOverride None
++    Order allow,deny
++    Allow from all
++    Require all granted
++  &lt;/Directory&gt;
++&lt;/VirtualHost&gt;
+</span></code></pre></div></div>
+
+<p>Disable every website enabled by apache, then enable your own.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % <span class="nb">ls</span> /etc/apache2/sites-enabled
+000-default
+root@server ~ % a2dissite 000-default
+root@server ~ % a2ensite example.com
+root@server ~ % systemctl restart apache2.service
+</code></pre></div></div>
+
+<p>Check that you have access to the website <strong>from your server</strong>.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># This should give "403 forbidden" you don't have permission.</span>
+neze@server ~ % curl <span class="nt">-Ls</span> localhost
+<span class="c"># This should show you the web page you created.</span>
+neze@server ~ % curl <span class="nt">-Ls</span> localhost/first.html
+</code></pre></div></div>
+
+<p>Open the <code class="highlighter-rouge">http</code> and <code class="highlighter-rouge">https</code> ports in the firewall.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % vim ~/firewall/iptables.rules
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code> -A INPUT -p icmp -j ACCEPT
+ -A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 22 -j ACCEPT
+<span class="gi">+-A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 80 -j ACCEPT
++-A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 443 -j ACCEPT
+</span> -A INPUT -m limit --limit 30/min -j LOG --log-prefix "iptables INPUT denied: " --log-level 7
+ -A FORWARD -m limit --limit 30/min -j LOG --log-prefix "iptables FORWARD denied: " --log-level 7
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % iptables-apply ~/firewall/iptables.rules
+</code></pre></div></div>
+
+<p>Check in your web browser on your computer that you <em>do not</em> have access to
+<code class="highlighter-rouge">http://example.com/</code> and that you do have access to <code class="highlighter-rouge">http://example.com/first.html</code>.</p>
+
+<h2 id="add-https-support">Add https support</h2>
+
+<h3 id="obtain-ssl-certificates">Obtain ssl certificates</h3>
+
+<p>Install certbot to use <a href="https://letsencrypt.org">letsencrypt</a> certificates. They
+are free SSL certificates that will allow you to have secure https websites
+access without having to pay an expensive Certificate Authority.
+Then, enable apache ssl support.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % apt-get <span class="nb">install </span>certbot
+root@server ~ % a2enmod ssl
+</code></pre></div></div>
+
+<p>Ask Let’s Encrypt for a certificate for your web server. The <code class="highlighter-rouge">certbot</code> utility
+will ask you for a valid e-mail (at least the first time).</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % certbot <span class="nt">--webroot</span> <span class="nt">--webroot-path</span> /var/www/example.com/html <span class="nt">-d</span> example.com certonly
+</code></pre></div></div>
+
+<p>In the end, links to certificates should be available in the <code class="highlighter-rouge">letsencrypt</code> folder.
+It is important to use the <code class="highlighter-rouge">live</code> folder (see below) because this folder will
+always be valid, even when the certificates will be renewed (we’ll talk about
+renewal down there).</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % <span class="nb">ls</span> /etc/letsencrypt/live/example.com
+total 4
+lrwxrwxrwx 1 root root  31 Nov 23 12:37 cert.pem -&gt; ../../archive/example.com/cert1.pem
+lrwxrwxrwx 1 root root  32 Nov 23 12:37 chain.pem -&gt; ../../archive/example.com/chain1.pem
+lrwxrwxrwx 1 root root  36 Nov 23 12:37 fullchain.pem -&gt; ../../archive/example.com/fullchain1.pem
+lrwxrwxrwx 1 root root  34 Nov 23 12:37 privkey.pem -&gt; ../../archive/example.com/privkey1.pem
+<span class="nt">-rw-r--r--</span> 1 root root 543 Sep 24 13:06 README
+</code></pre></div></div>
+
+<h3 id="setup-ssl-in-the-website">Setup ssl in the website</h3>
+
+<p>Modify the configuration of your website for it to be available only with https.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % vim /etc/apache2/sites-available/example.com.conf
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code> &lt;VirtualHost *:80&gt;
+<span class="gi">+  ServerAdmin neze@example.com
++  ServerName example.com
++  Redirect permanent / https://example.com/
++&lt;/VirtualHost&gt;
++&lt;VirtualHost *:443&gt;
++  SSLEngine on
++  SSLCertificateFile /etc/letsencrypt/live/example.com/cert.pem
++  SSLCertificateKeyFile /etc/letsencrypt/live/example.com/privkey.pem
++  SSLCertificateChainFile /etc/letsencrypt/live/example.com/chain.pem
++
+</span>   ServerAdmin neze@example.com
+   ServerName example.com
+   DocumentRoot /var/www/example.com/html
+ 
+   ErrorLog /var/www/example.com/logs/error.log
+   CustomLog /var/www/example.com/logs/access.log combined
+ 
+   &lt;Directory /var/www/example.com/html&gt;
+     Options -Indexes -FollowSymLinks
+     DirectoryIndex index.html index.php
+     AllowOverride None
+     Order allow,deny
+     Allow from all
+     Require all granted
+   &lt;/Directory&gt;
+ &lt;/VirtualHost&gt;
+</code></pre></div></div>
+
+<p>Reload the <code class="highlighter-rouge">apache2</code> server.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % systemctl reload apache2.service
+</code></pre></div></div>
+
+<p>Check in your web browser (in this order) that you have access to
+<code class="highlighter-rouge">https://example.com/first.html</code> and that <code class="highlighter-rouge">http://example.com/firts.html</code> is
+redirected to the https version.</p>
+
+<h3 id="setup-automatic-ssl-certificates-renewal">Setup automatic ssl certificates renewal</h3>
+
+<p>The SSL certificates you obtained are valid for 60 days. This is the default
+and mandatory value with Let’s Encrypt certificates. You need to setup automatic
+renewal for these certificates.</p>
+
+<p>First, try manual certificate renewal to understand what it does.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % which certbot
+/usr/bin/certbot
+root@server ~ % /usr/bin/certbot renew
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+
+<span class="nt">-------------------------------------------------------------------------------</span>
+Processing /etc/letsencrypt/renewal/example.com.conf
+<span class="nt">-------------------------------------------------------------------------------</span>
+Cert not yet due <span class="k">for </span>renewal
+
+The following certs are not due <span class="k">for </span>renewal yet:
+  /etc/letsencrypt/live/example.com/fullchain.pem <span class="o">(</span>skipped<span class="o">)</span>
+No renewals were attempted.
+</code></pre></div></div>
+
+<p>You can see that renewal will only be performed when needed. You can then simply
+setup a regular execution of this command (once every week for example).</p>
+
+<p>Choose randomly a minute (here, <strong>33</strong>), an hour (here, <strong>4</strong>) and a day of the
+week (here, <strong>1</strong>). Then, setup automatic renewal of your certificates.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % crontab <span class="nt">-e</span>
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code> # m h  dom mon dow   command
+<span class="gi">+33 4 * * 1 /usr/bin/certbot renew
+</span></code></pre></div></div>
+
+<h1 id="vpn-setup">VPN setup</h1>
+
+<p><strong>WARNING</strong>: This section is a work in progress.</p>
+
+<p>Setup a VPN server with OpenVPN</p>
+
+<h2 id="the-concept">The concept</h2>
+
+<p>A Virtual Private Network is made to group devices (your server, a phone,
+a laptop) as if they were in the same network. In this context, your server
+will act as the VPN server, i.e., as the gateway or the main router of the
+network. When connected to the VPN, the devices should be able to access the
+other devices or the network including the server, and might if you enable it
+access the Internet through (acting as) your server.</p>
+
+<p>This possibility to act as your server and access other devices makes security
+very important for the access to the VPN. For this purpose, authentication will
+be realized by using a system of SSL certificates and asymetric ciphering.</p>
+
+<p>More precisely, you will create a certificate authority that I will call <strong>ca</strong>
+and should be located on a safe machine if you want to be serious. The certificate
+authority will issue certificates for every actor of the VPN, including the
+server. In order to access the server, a client will need to own a valid
+certificate and its corresponding private key.</p>
+
+<p>Here, the ciphering algorithms will use 2kiB RSA keys. Elliptic curves are not
+used because the current version of the OpenVPN client for iOS does not implement
+ECDSA support.</p>
+
+<h2 id="prepare-mentally">Prepare mentally</h2>
+
+<p>You need to prepare a few things in order to make sure that the architecture is
+clear in your head. This will avoid mistakes and help you go through the setup
+without too much unnecessary pain.</p>
+
+<h3 id="network-architecture">Network architecture</h3>
+
+<p>You will configure a server, still called <strong>server</strong> because it is the same
+physical machine as your vps, and a client. Here it will be <strong>laptop</strong>.</p>
+
+<p>The openvpn server is located on your online machine (<em>example.com</em>) and will
+listen on a specific port (here, <strong>993</strong>) in udp or tcp (here, <strong>tcp</strong>).</p>
+
+<p>The private network will have a <a href="https://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces">private address space</a>. In this
+tutorial we will use <strong>10.0.0.0/24</strong>, i.e., addresses from 10.0.0.0 to
+10.0.0.255. The <a href="https://en.wikipedia.org/wiki/Subnetwork">network mask</a> will then be <strong>255.255.255.0</strong>. Do not
+hesitate to visit the links if there is something you do not understand.</p>
+
+<p><strong>Actors naming</strong>: I usually name the actors with subdomains of the server’s
+domain. It allowed me for example to easily add them to my internal DNS zone.
+Here, the server will then be <strong>vpn.example.com</strong>, and the client will be
+named <strong>laptop.example.com</strong>.</p>
+
+<h3 id="certificates-and-keys-management">Certificates and keys management</h3>
+
+<p>We will use <a href="https://github.com/OpenVPN/easy-rsa/releases/latest">easy-rsa</a> to manage keys and certificates. One easy-rsa
+instance is used as follows (details will be given later, no need to try now):</p>
+<ul>
+  <li>You download and extract the archive available under the easy-rsa link</li>
+  <li>You extract it in a folder that will be the easy-rsa instance</li>
+  <li>You apply <a href="https://gist.githubusercontent.com/w2ak/54ae736732258400f42845d6f67f1b3a/raw/c9bb2026c597961fc610020db39d557752b7d32e/easyrsa-bash-bug.patch">this patch</a> to fix a minor bug</li>
+  <li>In this folder there is an executable <code class="highlighter-rouge">easyrsa</code> that allows to perform almost
+every operation.</li>
+  <li>There will be a <code class="highlighter-rouge">pki</code> folder containing important files
+    <ul>
+      <li>ciphering parameters</li>
+      <li>private keys</li>
+      <li>certificates</li>
+      <li>certificate requests</li>
+    </ul>
+  </li>
+</ul>
+
+<p>A good practice is to compartimentalize, i.e., have a seperate easy-rsa instance
+for every actor in the vpn:</p>
+<ul>
+  <li>One instance for the certificate authority on the machine <strong>ca</strong> (possibly your
+laptop, preferably not your server)</li>
+  <li>One instance for the server on the machine <strong>server</strong></li>
+  <li>One instance for the client on the machine <strong>laptop</strong></li>
+</ul>
+
+<p>You can still, if you want, have only one instance for every actor. This means
+that the <strong>ca</strong> instance will generate everything, including the keys of everybody.
+The tutorial assumes you are using separate instances.</p>
+
+<h2 id="create-and-manage-certificates">Create and manage certificates</h2>
+
+<h3 id="prepare-a-blank-instance">Prepare a blank instance</h3>
+
+<p>You need to fix a minor bug in easy-rsa and do a little personalization. In this
+section, you will create your own easy-rsa archive and use it to create every
+instance.</p>
+
+<ul>
+  <li>Download the <a href="https://github.com/OpenVPN/easy-rsa/releases/latest">easy-rsa archive</a></li>
+  <li>Download the <a href="https://gist.githubusercontent.com/w2ak/54ae736732258400f42845d6f67f1b3a/raw/c9bb2026c597961fc610020db39d557752b7d32e/easyrsa-bash-bug.patch">easy-rsa patch</a></li>
+  <li>Apply the bug-fixing patch to your easy-rsa folder as follows</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop ~ % <span class="nb">ls</span> ~/Downloads <span class="o">&amp;&amp;</span> <span class="nb">cd</span> ~/Downloads
+EasyRSA-3.0.3.tgz  easyrsa-bash-bug.patch
+neze@laptop Downloads % <span class="nb">tar </span>xzf EasyRSA-3.0.3.tgz
+neze@laptop Downloads % <span class="nb">cd </span>EasyRSA-3.0.3
+neze@laptop EasyRSA-3.0.3 % git apply ../easyrsa-bash-bug.patch
+</code></pre></div></div>
+
+<p><span class="lettrine"><i class="fa fa-exclamation-triangle"></i></span>
+If you have an error while applying the patch, it means that you probably
+copy-pasted the patch instead of saving it. Open the link in your browser then
+<code class="highlighter-rouge">File&gt;Save</code> it as <code class="highlighter-rouge">easyrsa-bash-bug.patch</code> for example.</p>
+
+<ul>
+  <li>Create your own settings file</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop EasyRSA-3.0.3 % <span class="nb">cp </span>vars.example vars
+neze@laptop EasyRSA-3.0.3 % vim vars
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gd">-#set_var EASYRSA_REQ_COUNTRY   "US"
+-#set_var EASYRSA_REQ_PROVINCE  "California"
+-#set_var EASYRSA_REQ_CITY      "San Francisco"
+-#set_var EASYRSA_REQ_ORG       "Copyleft Certificate Co"
+-#set_var EASYRSA_REQ_EMAIL     "me@example.net"
+-#set_var EASYRSA_REQ_OU        "My Organizational Unit"
+</span><span class="gi">+set_var EASYRSA_REQ_COUNTRY   "FR"
++set_var EASYRSA_REQ_PROVINCE  "."
++set_var EASYRSA_REQ_CITY      "Paris"
++set_var EASYRSA_REQ_ORG       "MyCAOrg"
++set_var EASYRSA_REQ_EMAIL     "whatever@example.com"
++set_var EASYRSA_REQ_OU        "MyVPNOrg"
+</span></code></pre></div></div>
+
+<ul>
+  <li>Pack your own archive. You will use it for every easy-rsa instance</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop Downloads % <span class="nb">ls
+</span>EasyRSA-3.0.3.tgz EasyRSA-3.0.3  easyrsa-bash-bug.patch
+neze@laptop Downloads % <span class="nb">mv </span>EasyRSA-3.0.3 custom-easyrsa
+neze@laptop Downloads % <span class="nb">tar </span>czf custom-easyrsa.tgz custom-easyrsa
+</code></pre></div></div>
+
+<h3 id="initialize-the-ca-instance">Initialize the CA instance</h3>
+
+<p>Download and extract your custom easy-rsa wherever you want
+(preferably in a safe place) on the <strong>ca</strong> machine.</p>
+
+<p>Initialize a <code class="highlighter-rouge">pki</code> then a certificate authority. The certificate authority will
+own everything that is shared between the actors of the VPN. The passphrase
+should be considered important.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@ca easy-rsa % ./easyrsa init-pki
+neze@ca easy-rsa % ./easyrsa build-ca
+<span class="c"># ...</span>
+Enter PEM pass phrase: <span class="k">*********************************************</span>
+Verifying - Enter PEM pass phrase: <span class="k">*********************************************</span>
+Common Name <span class="o">(</span>eg: your user, host, or server name<span class="o">)</span> <span class="o">[</span>Easy-RSA CA]:example.com
+<span class="c"># ...</span>
+neze@ca easy-rsa % ssh server <span class="s2">"openvpn --genkey --secret /dev/fd/1"</span> <span class="o">&gt;</span> pki/private/tls.key
+</code></pre></div></div>
+
+<h3 id="initialize-the-server-instance">Initialize the server instance</h3>
+
+<p>Download and extract your custom easy-rsa. Then, initialize a <code class="highlighter-rouge">pki</code> and create
+a request for your server.</p>
+
+<p>A useful practice is to avoid putting a password to the server key, in order to be
+able to automatically start the VPN server.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server easy-rsa % ./easyrsa init-pki
+root@server easy-rsa % ./easyrsa gen-req vpn.example.com nopass
+<span class="c"># ...</span>
+Common Name <span class="o">(</span>eg: your user, host, or server name<span class="o">)</span> <span class="o">[</span>vpn.example.com]:
+<span class="c"># ...</span>
+root@server easy-rsa % ./easyrsa gen-dh
+<span class="c"># This process can be long and allows VPN connections to be faster</span>
+</code></pre></div></div>
+
+<p>This process put a <strong>private</strong> key in <code class="highlighter-rouge">pki/private/vpn.example.com.key</code>, and
+a certificate request in <code class="highlighter-rouge">pki/reqs/vpn.example.com.req</code>. You also created
+<strong>secret</strong> Diffie-Hellman parameters in <code class="highlighter-rouge">pki/dh.pem</code>.</p>
+
+<h3 id="initialize-the-client-instance">Initialize the client instance</h3>
+
+<p>This time you can (and maybe should) put a password. If you are creating an iOS
+client, though, I was not able to use password-protected keys yet.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@laptop easy-rsa % ./easyrsa init-pki
+neze@laptop easy-rsa % ./easyrsa gen-req laptop.example.com <span class="c"># nopass</span>
+</code></pre></div></div>
+
+<h3 id="issue-certificates-for-the-client-and-the-server">Issue certificates for the client and the server</h3>
+
+<p>With the CA instance, you now need to sign the requests from the server and the
+client. Make the two requests files you generated available to the <strong>ca</strong>
+machine.</p>
+
+<p><strong>You do not need to send anything else to the CA machine.</strong> Only send the <code class="highlighter-rouge">.req</code>
+files (for example by e-mail) using any non necessarily secure channel.</p>
+
+<p>Then, simply sign the requests with the CA instance.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@ca ~ % <span class="nb">ls</span> /path/to/requests
+laptop.example.com.req  vpn.example.com.req
+
+neze@ca easy-rsa % ./easyrsa import-req /path/to/requests/vpn.example.com vpn.example.com
+neze@ca easy-rsa % ./easyrsa import-req /path/to/requests/laptop.example.com laptop.example.com
+
+neze@ca easy-rsa % ./easyrsa sign-req server vpn.example.com
+<span class="c"># ...</span>
+  Confirm request details: <span class="nb">yes</span>
+<span class="c"># ...</span>
+Enter pass phrase <span class="k">for </span>pki/private/ca.key: <span class="k">*********************************************</span>
+<span class="c"># ...</span>
+neze@ca easy-rsa % ./easyrsa sign-req client laptop.example.com
+</code></pre></div></div>
+
+<p>This generated two <code class="highlighter-rouge">.crt</code> files in the <code class="highlighter-rouge">pki/issued</code> folder. Send the following
+files to each actor:</p>
+<ul>
+  <li>The <code class="highlighter-rouge">pki/ca.crt</code> file is the certificate of the authority.</li>
+  <li>The <code class="highlighter-rouge">pki/private/tls.key</code> file is the pre-shared key file for additional security.</li>
+  <li>The <code class="highlighter-rouge">pki/issued/__name__.example.com.crt</code> is the certificate file for the
+corresponding actor.</li>
+</ul>
+
+<p>It is better to use a secure channel this time because the <code class="highlighter-rouge">tls.key</code> file is
+supposed to remain at least a minimum private.</p>
+
+<p>Down there is an example to make it private. The client will need <code class="highlighter-rouge">openssl</code> to
+decipher it.</p>
+
+<ul>
+  <li>On the CA: prepare a secure archive to send to (for example) <strong>vpn</strong>.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@ca easy-rsa % <span class="nb">mkdir</span> <span class="nt">-p</span> build <span class="o">&amp;&amp;</span> <span class="nb">chmod </span>700 build
+neze@ca easy-rss % <span class="nb">cp </span>pki/ca.crt pki/private/tls.key pki/issued/vpn.example.com.crt pki/reqs/vpn.example.com.req build/.
+neze@ca easy-rsa % <span class="nb">cd </span>build
+neze@ca build % openssl req <span class="nt">-in</span> vpn.example.com.req <span class="nt">-noout</span> <span class="nt">-pubkey</span> <span class="nt">-out</span> vpn.example.com.pub
+neze@ca build % openssl rand 192 <span class="nt">-out</span> vpn.example.com.tgz.key
+neze@ca build % <span class="nb">tar </span>cf - ca.crt tls.key vpn.example.com.crt | openssl aes-256-cbc <span class="nt">-pass</span> file:vpn.example.com.tgz.key <span class="nt">-out</span> vpn.example.com.tgz.enc
+neze@ca build % openssl rsautil <span class="nt">-encrypt</span> <span class="nt">-pubin</span> <span class="nt">-inkey</span> vpn.example.com.pub <span class="nt">-in</span> vpn.example.com.key <span class="nt">-out</span> vpn.example.com.tgz.key.enc
+</code></pre></div></div>
+
+<ul>
+  <li>Send the <code class="highlighter-rouge">*.enc</code> files (two files) to the client.</li>
+  <li>On the client: decrypt the data and get the files</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@server tmp-folder % openssl rsautl <span class="nt">-decrypt</span> <span class="nt">-ssl</span> <span class="nt">-inkey</span> /path/to/easyrsa/pki/private/vpn.example.com.key <span class="nt">-in</span> vpn.example.com.tgz.key.enc <span class="nt">-out</span> vpn.example.com.tgz.key
+neze@server tmp-folder % openssl aes-256-cbc <span class="nt">-d</span> <span class="nt">-pass</span> file:vpn.example.com.tgz.key <span class="nt">-in</span> vpn.example.com.tgz.enc | <span class="nb">tar </span>xf -
+</code></pre></div></div>
+
+<ul>
+  <li>Now you have access to <code class="highlighter-rouge">tls.key</code>, <code class="highlighter-rouge">ca.crt</code>, <code class="highlighter-rouge">vpn.example.com.crt</code>.</li>
+</ul>
+
+<h2 id="openvpn-server">OpenVPN server</h2>
+
+<p>In the server we will create a <code class="highlighter-rouge">vpn</code> folder (here it will be <code class="highlighter-rouge">/root/vpn</code>) that
+will eventually contain every necessary file for the OpenVPN server to run.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % <span class="nb">mkdir</span> /root/vpn <span class="o">&amp;&amp;</span> <span class="nb">cd</span> /root/vpn
+root@server vpn % <span class="nb">cp</span> /path/to/ca.crt /path/to/tls.key /path/to/vpn.example.com.crt /path/to/vpn.example.com.key /path/to/dh.pem <span class="nb">.</span>
+root@server vpn % <span class="nb">chmod </span>400 tls.key vpn.example.com.key dh.pem
+root@server vpn % <span class="nb">chmod </span>444 ca.crt vpn.example.com.crt
+</code></pre></div></div>
+
+<p>Once you are sure that you got the <code class="highlighter-rouge">.key</code> file and <code class="highlighter-rouge">dh.pem</code> file, you can delete
+the easy-rsa server instance if you want and if it is only the server’s instance.</p>
+
+<h3 id="server-config-file">Server config file</h3>
+
+<p>We will create a basic configuration. You should use absolute paths in this
+configuration because it could be used from any working directory. Remember
+that the default values mentioned before and used in the configuration file
+should be changed depending on what you chose.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server vpn % <span class="nb">touch </span>server.conf <span class="o">&amp;&amp;</span> <span class="nb">chmod </span>644 server.conf
+root@server vpn % vim server.conf
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gi">+port                    993
++proto                   tcp
++dev                     tun
++topology                subnet
++server                  10.0.0.0 255.255.255.0
++ifconfig-pool-persist   /root/vpn/ipp.txt
++push                    "route 10.0.0.0 255.255.255.0"
++client-to-client
++keepalive               10 120
++cipher                  AES-256-CBC
++max-clients             5
++user                    nobody
++group                   nogroup
++persist-key
++persist-tun
++log                     /root/vpn/server.log
++verb                    3
++
++dh                      /root/vpn/dh.pem
++
++tls-auth                /root/vpn/tls.key 0
++ca                      /root/vpn/ca.crt
++cert                    /root/vpn/vpn.example.com.crt
++key                     /root/vpn/vpn.example.com.key
+</span></code></pre></div></div>
+
+<p>If you intend to use udp, you should slightly change the setup as follows</p>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code> port                    993
+<span class="gd">-proto                   tcp
+</span><span class="gi">+proto                   udp
++explicit-exit-notify
+</span> dev                     tun
+</code></pre></div></div>
+
+<p>You can quickly test that there is nothing wrong with this configuration by
+commenting out the logfile instruction and running openvpn.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server vpn % openvpn <span class="nt">--config</span> server.conf
+</code></pre></div></div>
+
+<h3 id="client-config-files">Client config files</h3>
+
+<p>Then, you need to write sample configurations for the clients because their
+configuration needs to match the server’s.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server vpn % <span class="nb">touch </span>client.conf <span class="o">&amp;&amp;</span> <span class="nb">chmod </span>644 client.conf
+root@server vpn % vim client.conf
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gi">+client
++proto           tcp
++remote          example.com 993
++dev tun
++resolv-retry    infinite
++nobind
++persist-key
++persist-tun
++remote-cert-tls server
++cipher          AES-256-CBC
++ping            10
++ping-restart    30
++
++tls-auth        tls.key 1
++ca              ca.crt
++cert            client.crt
++key             client.key
+</span></code></pre></div></div>
+
+<p>You should also create a sample self-contained configuration. Its use will be
+explained in the client part.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server vpn % <span class="nb">cp </span>client.conf client.ovpn
+root@server vpn % vim client.ovpn
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ping-restart    30
+ 
+<span class="gd">-tls-auth        tls.key 1
+</span><span class="gi">+key-direction   1
++&lt;tls-auth&gt;
++-----BEGIN OpenVPN Static key V1-----
++...
++-----END OpenVPN Static key V1-----
++&lt;/tls-auth&gt;
+</span><span class="gd">-ca              ca.crt
+</span><span class="gi">+&lt;ca&gt;
++-----BEGIN CERTIFICATE-----
++...
++-----END CERTIFICATE-----
++&lt;/ca&gt;
+</span><span class="gd">-cert            client.crt
+</span><span class="gi">+&lt;cert&gt;
++-----BEGIN CERTIFICATE-----
++...
++-----END CERTIFICATE-----
++&lt;/cert&gt;
+</span><span class="gd">-key             client.key
+</span><span class="gi">+&lt;key&gt;
++-----BEGIN PRIVATE KEY-----
++...
++-----END PRIVATE KEY-----
++&lt;/key&gt;
+</span></code></pre></div></div>
+
+<h3 id="enable-your-openvpn-instance">Enable your OpenVPN instance</h3>
+
+<p>There are two independant steps in this process: setup and start the openvpn
+service, and open the necessary parts of the firewall.</p>
+
+<p>We will start with the openvpn service. Create a link to your configuration in
+the openvpn folder.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % <span class="nb">ln</span> <span class="nt">-s</span> /root/vpn/server.conf /etc/openvpn/vpn.example.com.conf
+</code></pre></div></div>
+
+<p>Modify the openvpn configuration to automatically start your vpn server.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % vim /etc/default/openvpn
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gd">-#AUTOSTART="all"
+</span><span class="gi">+AUTOSTART="all"
+</span></code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % systemctl daemon-reload
+</code></pre></div></div>
+
+<p>Enable and start the openvpn service, then check that your OpenVPN server is
+running.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % systemctl <span class="nb">enable </span>openvpn.service
+root@server ~ % systemctl start openvpn@vpn.example.com.service
+root@server ~ % ps aux | <span class="nb">grep </span>openvpn
+</code></pre></div></div>
+
+<p>You also need to configure the firewall. You should open the correct port to
+enable clients to access your OpenVPN server.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % vim ~/firewall/iptables.rules
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code> -A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 22 -j ACCEPT
+ -A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 80 -j ACCEPT
+ -A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 443 -j ACCEPT
+<span class="gi">+-A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 993 -j ACCEPT
+</span> -A INPUT -m limit --limit 30/min -j LOG --log-prefix "iptables INPUT denied: " --log-level 7
+<span class="gi">+-A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+</span> -A FORWARD -m limit --limit 30/min -j LOG --log-prefix "iptables FORWARD denied: " --log-level 7
+ COMMIT
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % iptables-apply ~/firewall/iptables.rules
+</code></pre></div></div>
+
+<p>Then, enable forwarding and set it persistent.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % sysctl <span class="nt">-w</span> net.ipv4.conf.all.forwarding<span class="o">=</span>1
+root@server ~ % vim ~/firewall/restore.sh
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code> # enabling forwarding is necessary if you have a VPN
+<span class="gd">-# sysctl -w net.ipv4.conf.all.forwarding=1 &gt;/dev/null 2&gt;/dev/null
+</span><span class="gi">+sysctl -w net.ipv4.conf.all.forwarding=1 &gt;/dev/null 2&gt;/dev/null
+</span> # do not forget ipv6 firewall if your server is ipv6 enabled
+</code></pre></div></div>
+
+<h3 id="additional-firewall-configuration">Additional firewall configuration</h3>
+
+<p>The firewall configuration you did only enabled connections between your VPN
+clients and your server. Right now, a VPN client can connect to the VPN server
+and has the same rights as any other machine trying to access your server.</p>
+
+<p>Identify the <code class="highlighter-rouge">tun</code> interface your openvpn server is working on. Here, it will
+be <strong>tun0</strong>. Identify the interface connected to Internet. Here, it will be
+<strong>eth0</strong>.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % ip <span class="nb">link</span>
+</code></pre></div></div>
+
+<h4 id="internet-access">Internet access</h4>
+
+<p>Enable VPN clients to access Internet through (as) your VPN server.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % vim ~/firewall/iptables.rules
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code> -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+<span class="gi">+-A FORWARD -i tun0 -s 10.0.0.0/24 -o eth0 -j ACCEPT
+</span> -A FORWARD -m limit --limit 30/min -j LOG --log-prefix "iptables FORWARD denied: " --log-level 7
+ COMMIT
+<span class="gi">+*nat
++:PREROUTING ACCEPT
++:INPUT ACCEPT
++:OUTPUT ACCEPT
++:POSTROUTING ACCEPT
++-A POSTROUTING -s 10.0.0.0/24 -o eth0 -j SNAT --to-source 93.184.216.34
++COMMIT
+</span></code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % iptables-apply ~/firewall/iptables.rules
+</code></pre></div></div>
+
+<h4 id="client-to-client-access">Client-to-client access</h4>
+
+<p>Enable VPN clients to access each other.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % vim ~/firewall/iptables.rules
+</code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code> -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+ -A FORWARD -i tun0 -s 10.0.0.0/24 -o eth0 -j ACCEPT
+<span class="gi">+-A FORWARD -i tun0 -s 10.0.0.0/24 -o tun0 -d 10.0.0.0/24 -j ACCEPT
+</span> -A FORWARD -m limit --limit 30/min -j LOG --log-prefix "iptables FORWARD denied: " --log-level 7
+ COMMIT
+ *nat
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@server ~ % iptables-apply ~/firewall/iptables.rules
+</code></pre></div></div>
+
+<h2 id="openvpn-client">OpenVPN client</h2>
+
+<p>Depending on your OS, you will use different softwares. On some software, it is
+easier to use standalone config files (here they are <code class="highlighter-rouge">*.ovpn</code> files to make it
+simpler).</p>
+
+<ul>
+  <li>MacOS: install Tunnelblick</li>
+  <li>Linux: you can use openvpn with NetworkManager</li>
+  <li>iOS and Android: OpenVPN Connect</li>
+</ul>
+
+<p>This part gives simple explanations about the whole process because with so much
+information above, it is difficult to have a clear idea of what you need to do.</p>
+
+<h3 id="what-you-need">What you need</h3>
+
+<ul>
+  <li>A laptop with openssl installed and a working folder that I will call <code class="highlighter-rouge">build</code>.</li>
+  <li>A client (possibly the same laptop, unless your client is a phone).</li>
+  <li>An already configured server.</li>
+</ul>
+
+<h3 id="steps-to-add-this-client">Steps to add this client</h3>
+
+<ul>
+  <li>Provide the client laptop with your custom easy-rsa (this way the configuration is
+the same).</li>
+  <li>On the client laptop
+    <ul>
+      <li><a href="#initialize-the-client-instance">Create the request</a></li>
+      <li>Send the request to the CA</li>
+      <li>Put the private key from <code class="highlighter-rouge">pki/private/_client_.key</code> to your <code class="highlighter-rouge">build</code> folder</li>
+      <li>You can delete the client easy-rsa instance</li>
+    </ul>
+  </li>
+  <li>On the CA
+    <ul>
+      <li><a href="#issue-certificates-for-the-client-and-the-server">Sign the client request</a></li>
+      <li>Maybe encrypt the files before sending them. P.S. If you are using ssh for
+file transfers, no need to add the encryption layer</li>
+      <li>Send the files to the client laptop</li>
+    </ul>
+  </li>
+  <li>On the server
+    <ul>
+      <li>Send the two client config files to the client laptop</li>
+    </ul>
+  </li>
+  <li>On the client laptop
+    <ul>
+      <li>Maybe decrypt the files from the CA</li>
+      <li>Put every file in the <code class="highlighter-rouge">build</code> folder. You should have:
+        <ul>
+          <li><code class="highlighter-rouge">client.conf</code> and <code class="highlighter-rouge">client.ovpn</code></li>
+          <li><code class="highlighter-rouge">ca.crt</code> and <code class="highlighter-rouge">tls.key</code></li>
+          <li><code class="highlighter-rouge">_client_.key</code> and <code class="highlighter-rouge">_client_.crt</code></li>
+        </ul>
+      </li>
+      <li>Use the config file of your choice (depending on whether you want a standalone
+config file or not) and modify it by taking data in the other files. Here are
+examples. The Base64 data was directly taken in the files.</li>
+      <li>Then you can just send the <code class="highlighter-rouge">client.ovpn</code> file, or an archive containing the
+<code class="highlighter-rouge">client.conf</code> file with the four keys and certificates files, to the client.</li>
+    </ul>
+  </li>
+  <li>On the client
+    <ul>
+      <li>Enjoy!</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">@</span> client.conf
+
+-tls-auth        tls.key 1
+<span class="gd">-ca              ca.crt
+-cert            client.crt
+-key             client.key
+</span><span class="gi">+tls-auth        /path/to/tls.key 1
++ca              /path/to/ca.crt
++cert            /path/to/_client_.crt
++key             /path/to/_client_.key
+</span></code></pre></div></div>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">@</span> client.ovpn
+
+ ping-restart    30
+ 
+ key-direction   1
+ &lt;tls-auth&gt;
+ -----BEGIN OpenVPN Static key V1-----
+<span class="gd">-...
+</span><span class="gi">+606aafbb7474cb29b5adb3436d7e5446
++4e33e66a57821dde9eb6843b1176d7dc
++75fcb94bd98dcd4234528ac2e318c504
++b51afc163b146b42b320bb9bce39f27c
++4bb1bd802e154aa58288256c6ac60a67
++1f3e0                      02b56
++8e75a                      994c8
++2c03a    Taken from the    1b29a
++ef79c    `tls.key' file    13226
++43a95                      b14fd
++aa25f                      be3ea
++82db6043752aef6a3de678ee3e128aa5
++b46838f307a13b0d1c7f729d34ba3197
++815a5670b434abde50c6958641480649
++8ff8de6929aa4ae021b8f7637957cf5d
++f4941e62b8502647aa00f050ea83f26c
+</span> -----END OpenVPN Static key V1-----
+ &lt;/tls-auth&gt;
+ &lt;ca&gt;
+ -----BEGIN CERTIFICATE-----
+<span class="gd">-...
+</span><span class="gi">+MIIDNTCCAh2gAwIBAgIJAJs+aLUfaW2iMA0GCSqGSIb3DQEBCwUAMBYxFDASBgNV
++BAMMC2V4YW1wbGUuY29tMB4XDTE3MTIwODEzNDUyOFoXDTI3MTIwNjEzNDUyOFow
++FjEUMBIGA1UEAwwLZXhhbXBsZS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
++ggEKAoIBAQCib40mJ1L1R27v6pWVRpN1mk2fgZ0ijN8+GXbAcB71czjsWXxIZq2t
++f9nT/MQ+N1cbXCjjV/8eq25SjcHvHhoPns+QrTLryN/b8ujU7IAozW4IJ19cYnnv
++E735VxZtB/Ne9gLbf2C/74E3kZG8OpK1+RJ6idK4Gz4GQBCBytFqdQKT9s/sYyPA
++vsc+VEzXLOS09TyTzx1XGjjeamTm3mGlOHRIDxYa+r9SaLfLWv/TJhRAzgQNMyiC
++JWeRu                                                      yzIHE
++NoB/U           Taken from the `ca.crt' file.              EFBlm
++gBKuj                                                      C/yWH
++5k/roRqkGDAWMRQwEgYDVQQDDAtleGFtcGxlLmNvbYIJAJs+aLUfaW2iMAwGA1Ud
++EwQFMAMBAf8wCwYDVR0PBAQDAgEGMA0GCSqGSIb3DQEBCwUAA4IBAQB5+uEAoFhW
++FGQmP/sbB6fOHNfhK3sYmzOjkQGn3pdsyQ1MvwcL0qCyH+iWbmjxCWlWJRC0WkP3
++W0T9oOeKGuDCTLzjuyZ4M/d4IcFCdOliY517eVCaeE5/uYFEaBseJjDqfEPqDKhr
++XETj/hcZxXf6DcveyYE3dtJ7NEsTyfXaKCJTvgPOiIE0pZ2rjJMcO2d0+DNqpk3M
++lp8oMPiq9HxjdvFM45oupY3nbQEM70p0NkOxGnrMesC0Hl++H0pmpn4OJM1GNdEf
++mi9DRkWOfYbyWhmDivEbsAHxv+i9xsC5ia/NY5/uKWB9klDTfl0Sp+XdnDUduuFz
++HboGYhuJxNQJ
+</span> -----END CERTIFICATE-----
+ &lt;/ca&gt;
+ &lt;cert&gt;
+ -----BEGIN CERTIFICATE-----
+<span class="gd">-...
+</span><span class="gi">+MIIDVTCCAj2gAwIBAgIQGLag/LPVbrqgd3eGx1drMDANBgkqhkiG9w0BAQsFADAW
++MRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xNzEyMDgxMzU1MjhaFw0yNzEyMDYx
++MzU1MjhaMB0xGzAZBgNVBAMMEmxhcHRvcC5leGFtcGxlLmNvbTCCASIwDQYJKoZI
++hvcNAQEBBQADggEPADCCAQoCggEBALoBFuGdPD70L2vNGX2gE9EQ8gIwmCCF5Qll
++eJ4zShCpc77vnoPCFDYYUfR0re9nMceLnUBhDIGqq6EDWtHulnZuKuTF2VS9DoaR
++wbN/ttA9xfAsOgxycwk2pvKQtoi1vtYfZmBIuHu+8aBezUoHpcFZ8DZ7d6kPGNeY
++91SfJQHR9rMIMvHRz+3wBtyTiS2OqHWCTYEzpB7BsCejmZmgFduVcFh6HGx22Mv/
++jM4Gd                                                      uX3Yr
++kSNEq        Taken from the `_client_.crt' file.           BlzCB
++lDAJB                                                      GBgNV
++HSMEPzA9gBQZZoASro2Exk0prCyvAv8lh+ZP66EapBgwFjEUMBIGA1UEAwwLZXhh
++bXBsZS5jb22CCQCbPmi1H2ltojATBgNVHSUEDDAKBggrBgEFBQcDAjALBgNVHQ8E
++BAMCB4AwDQYJKoZIhvcNAQELBQADggEBABvBBoW17VJxXZmsV+PI1V5f9OWHcdrR
++ixIY4JoWGkzobn9Li+zlgvVPWjguL/VTXPX+J6aHcLW4w/hRsyDEYU9wNHjCNnFB
++CrYthURSVVC9ojUJ0KoUyTMomIQWCLpsv/Oa5rEcwYmjj9viLFN3FvyN7G6Z7jen
++DivtjNcf5cdy0k8uEYBarnf7OApP4XQSbE5Z+2YLyiGSMy5wxFCFeXH16/RcJp++
++PBE5ctCZqonO4wfGIs6PnnFK8kvyzeyr13bFVbZaMz0BmpOzNdMczl9SDyQw5FFf
++MvPE0YZQneJgJFXJKYu0NsyOsokyIXcUAsbzPenadKbP4X5OWdDQNt4=
+</span> -----END CERTIFICATE-----
+ &lt;/cert&gt;
+ &lt;key&gt;
+ -----BEGIN PRIVATE KEY-----
+<span class="gd">-...
+</span><span class="gi">+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC6ARbhnTw+9C9r
++zRl9oBPREPICMJggheUJZXieM0oQqXO+756DwhQ2GFH0dK3vZzHHi51AYQyBqquh
++A1rR7pZ2birkxdlUvQ6GkcGzf7bQPcXwLDoMcnMJNqbykLaItb7WH2ZgSLh7vvGg
++Xs1KB6XBWfA2e3epDxjXmPdUnyUB0fazCDLx0c/t8Abck4ktjqh1gk2BM6QewbAn
++o5mZoBXblXBYehxsdtjL/4zOBncCButs24pjRaAfQ4v0RKP/niFpQm+FPcE4lZb/
++EBkOwIF82UJxMJFhrl92K5EjRKk+Zm+WEatzfdI9xLc0VUz3T+LoNS7vsS1/1zPr
++6Rh7XrF9AgMBAAECggEAC8C33med/+hT+r7J5osv1Vz5vbOuWRe8whw8Q9q/yk+6
++tYzUekTQHB7rRsP8nYzqs04aEJBRRvwuvgzFN1CZB0CsyynJMraDbXNWRu5B8eSF
++VkilHlY4+JMQd3E3Z2n8dfEj+d9+cKs+/0AePpg/G/l/2SFyDSecDTtoHVu07eln
++pAU+W4WO0Dvx6hup5LOND3koBNTvYBeEk4GrB0W2Wr3lQV8X47zIOxVhFPfombDx
++6OuqOJPqZ0hfOa9vJJLNI0vzR79vSItJ95nFKE3yPawlUlGB8o42NQV+djtkJxxd
++2YLvZ                                                      iXF99
++4LPXC        Taken from the `_client_.key' file.           CNxoA
++3DMt8                                                      45/jv
++DuhmWd8y53yt/zIfaSCTIMa5ZQKBgQDBm4kAhqryw+BbIbSRzLwLxmK7qCrENHlC
++/Vp5qzo1PXw2AoNlQN4TbvQ3xWQZ4kdkJtUr0vDK6K4VR8o1GMm9fqNsdDTc2f1x
++q/a1s/iXVwDV6OFgyKcbPL5pAt+3vXVn79ZFknaxXEulWypOUdwosxhXXUXjZnwY
++KvE9OIAiOQKBgHH51UOGH23qyJio3Cv2jQETzghYgXwwDVK7k6/MIDzvIYvkdKxm
++IWJMxcZt72htU7rxgu2f0X+BL754UJmjcihRHXmFXn26vvv8OojEsn1DdJWfGae7
++np+p9QfqB00svpYbbA6L4j9glzNKdSc77mE4NuJdOn9b6zt5OXpVTyKtAoGAOk83
++sdrdPYRU292I3qiEsh8ruUzqpHERXGWljCNPwp0j/bhADoy81amDEBD5FvqZecZg
++SXScZOAzHeGjOt6eU94CJjXRffqBZGzgPtVXN21SqRocVuPXwFJJHqNo8ZOz+nu3
++UvjLmpsrhT+xvCjXX8KgwB8tX1GMalL0mPWdUbECgYEAmr6lsqd5UWlBzk3O/6Nf
++s90C9wKcDLyMjktu5fAk0pP/rZgfLcSc5pH1xIg/+ufktZqiOwDhm28Une4VDyuv
++q3po3yneF4CHVtNsg3J89xXTaCzyygCIRsqSmVwbGlDRSDftPytnB8vteMqrbPAk
++WOmXfzRj2ZsFLnldASN2jA8=
+</span> -----END PRIVATE KEY-----
+ &lt;/key&gt;
+</code></pre></div></div>
+
+
+  </section>
+  
+</article>
+
+
+
+      </div>
+
+      <footer class="footer">
+  <span class="footer__copyright">&copy; 2021 Clément Durand. All rights reserved.</span>
+</footer>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+
+  <title>Traffic shaping tricks</title>
+  <meta name="description" content="This is how I limited my dad’s bandwidth on my server :°
+">
+  <meta name="author" content="Clément Durand">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Traffic shaping tricks">
+  <meta name="twitter:description" content="This is how I limited my dad’s bandwidth on my server :°
+">
+  
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Traffic shaping tricks">
+  <meta property="og:description" content="This is how I limited my dad’s bandwidth on my server :°
+">
+
+  <link rel="shortcut icon" href="/images/favicons/favicon.ico">
+  <meta name="msapplication-TileColor" content="#ffc40d">
+  <meta name="msapplication-TileImage" content="/images/favicons/mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://www.neze.fr/2017/traffic-shaping/">
+  <link rel="alternate" type="application/rss+xml" title="Hello there!" href="/feed.xml">
+</head>
+
+
+  <body>
+    <span class="mobile btn-mobile-menu">
+  <i class="fas fa-bars btn-mobile-menu__icon"></i>
+  <!--<i class="far fa-times-circle btn-mobile-close__icon hidden"></i>-->
+</span>
+
+<header class="panel-cover" style="background-image: url(/images/cover.jpg)">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="link to home of Hello there!">
+          <img src="/images/profile.png" class="user-image" alt="My Profile Photo">
+          <h1 class="panel-cover__title panel-title">Hello there!</h1>
+        </a>
+        <hr class="panel-cover__divider">
+        <p class="panel-cover__description">My front to the Worst Wild Web</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary">
+
+        <div class="navigation-wrapper">
+          <nav class="cover-navigation">
+            <ul class="navigation">
+              <li class="navigation__item">
+                <a href="/#blog" title="link to Hello there! blog" class="blog-button">Blog</a>
+              </li>
+            </ul>
+          </nav>
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+              
+              <!-- Keybase -->
+              <li class="navigation__item">
+                <a href="https://keybase.io/neze" title="Keybase" target="_blank">
+                  <i class="fab fa-keybase"></i>
+                  <span class="label">Keybase</span>
+                </a>
+              </li>
+              
+              
+              <!-- PGP Key -->
+              <li class="navigation__item">
+                <a href="https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=index&search=0xef2d00c6caa88d40" title="PGP" target="_blank">
+                  <i class="fas fa-fingerprint"></i>
+                  <span class="label">PGP</span>
+                </a>
+              </li>
+              
+              
+              <!-- Email -->
+              <li class="navigation__item">
+                <a href="mailto:clement@neze.fr" title="Email" target="_blank">
+                  <i class="fas fa-envelope"></i>
+                  <span class="label">Email</span>
+                </a>
+              </li>
+              
+              
+              <!-- RSS -->
+              <li class="navigation__item">
+                <a href="/feed.xml" title="Subscribe" target="_blank">
+                  <i class="fas fa-rss"></i>
+                  <span class="label">RSS</span>
+                </a>
+              </li>
+              
+            </ul>
+          </nav>
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+              
+              <!-- Mastodon -->
+              <li class="navigation__item">
+                <a href="https://framapiaf.org/@neze" title="Mastodon" target="_blank">
+                  <i class="fab fa-mastodon"></i>
+                  <span class="label">Mastodon</span>
+                </a>
+              </li>
+              
+              
+              <!-- Twitter -->
+              <li class="navigation__item">
+                <a href="https://twitter.com/neze_drd" title="Twitter" target="_blank">
+                  <i class="fab fa-twitter"></i>
+                  <span class="label">Twitter</span>
+                </a>
+              </li>
+              
+              
+              <!-- Reddit -->
+              <li class="navigation__item">
+                <a href="https://www.reddit.com/user/neze_drd" title="Reddit" target="_blank">
+                  <i class="fab fa-reddit-alien"></i>
+                  <span class="label">Reddit</span>
+                </a>
+              </li>
+              
+              
+              <!-- Facebook -->
+              <li class="navigation__item">
+                <a href="https://www.facebook.com/SaXw2aK" title="Facebook" target="_blank">
+                  <i class="fab fa-facebook-f"></i>
+                  <span class="label">Facebook</span>
+                </a>
+              </li>
+              
+              
+              <!-- Instagram -->
+              <li class="navigation__item">
+                <a href="https://www.instagram.com/neze_drd" title="Instagram" target="_blank">
+                  <i class="fab fa-instagram"></i>
+                  <span class="label">Instagram</span>
+                </a>
+              </li>
+              
+              
+              <!-- Snapchat -->
+              <li class="navigation__item">
+                <a href="https://www.snapchat.com/add/neze_drd" title="Snapchat" target="_blank">
+                  <i class="fab fa-snapchat-ghost"></i>
+                  <span class="label">Snapchat</span>
+                </a>
+              </li>
+              
+              
+              
+              <!-- LinkedIn -->
+              <li class="navigation__item">
+                <a href="https://www.linkedin.com/in/clement-durand" title="LinkedIn" target="_blank">
+                  <i class="fab fa-linkedin-in"></i>
+                  <span class="label">LinkedIn</span>
+                </a>
+              </li>
+              
+              
+              <!-- Omg.lol -->
+              <li class="navigation__item">
+                <a href="https://neze.omg.lol/" title="Omg.lol" target="_blank">
+                  <i class="far fa-grin-squint-tears"></i>
+                  <span class="label">Omg.lol</span>
+                </a>
+              </li>
+              
+              
+              <!-- Git -->
+              <li class="navigation__item">
+                <a href="https://framagit.org/neze" title="Git" target="_blank">
+                  <i class="fab fa-git-alt"></i>
+                  <span class="label">Git</span>
+                </a>
+              </li>
+              
+              
+              <!-- GitHub -->
+              <li class="navigation__item">
+                <a href="https://www.github.com/w2ak" title="GitHub" target="_blank">
+                  <i class="fab fa-github-alt"></i>
+                  <span class="label">GitHub</span>
+                </a>
+              </li>
+              
+              
+              <!-- Git -->
+              <li class="navigation__item">
+                <a href="https://www.gitlab.com/neze" title="GitLab" target="_blank">
+                  <i class="fab fa-gitlab"></i>
+                  <span class="label">GitLab</span>
+                </a>
+              </li>
+              
+            </ul>
+          </nav>
+        </div>
+
+    </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+      <div class="content-wrapper__inner">
+        <article class="post-container post-container--single">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-06-23 00:00" class="post-meta__date date">23 Jun 2017</time>
+      
+      &#8226; <span class="post-meta__tags">on <a href="/tags/#howto">howto</a>, <a href="/tags/#network">network</a>, <a href="/tags/#shell">shell</a></span>
+      
+    </div>
+    <h1 class="post-title">Traffic shaping tricks</h1>
+  </header>
+
+  <section class="post">
+    <p><em>This is how I limited my dad’s bandwidth on my server :°</em></p>
+
+<hr />
+
+<p>Assume you want to limit the bandwidth on your vpn for only specific clients by ip.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="nv">NETCARD</span><span class="o">=</span>tun0
+<span class="nv">MAXBANDWIDTH</span><span class="o">=</span>8192 <span class="c"># kiB/s, i.e. 8MiB/s</span>
+
+<span class="c"># reinit</span>
+tc qdisc del dev <span class="nv">$NETCARD</span> root handle 1
+tc qdisc add dev <span class="nv">$NETCARD</span> root handle 1: htb default 9999
+
+<span class="c"># create default class</span>
+tc class add dev <span class="nv">$NETCARD</span> parent 1:0 classid 1:9999 htb rate <span class="k">$((</span> <span class="nv">$MAXBANDWIDTH</span> <span class="k">))</span>kbps ceil <span class="k">$((</span> <span class="nv">$MAXBANDWIDTH</span> <span class="k">))</span>kbps burst 5k prio 9999
+
+<span class="c"># control bandwidth per IP</span>
+<span class="nb">declare</span> <span class="nt">-A</span> ipctrl
+ipctrl[10.42.0.4]<span class="o">=</span><span class="s2">"128"</span> <span class="c"># kB/s</span>
+
+<span class="nv">mark</span><span class="o">=</span>0
+<span class="k">for </span>ip <span class="k">in</span> <span class="s2">"</span><span class="k">${</span><span class="p">!ipctrl[@]</span><span class="k">}</span><span class="s2">"</span>
+<span class="k">do
+    </span><span class="nv">mark</span><span class="o">=</span><span class="k">$((</span> mark <span class="o">+</span> <span class="m">1</span> <span class="k">))</span>
+    <span class="nv">bandwidth</span><span class="o">=</span><span class="k">${</span><span class="nv">ipctrl</span><span class="p">[</span><span class="nv">$ip</span><span class="p">]</span><span class="k">}</span>
+
+    <span class="c"># traffic shaping rule</span>
+    tc class add dev <span class="nv">$NETCARD</span> parent 1:0 classid 1:<span class="nv">$mark</span> htb rate <span class="k">$((</span> <span class="nv">$bandwidth</span> <span class="k">))</span>kbps ceil <span class="k">$((</span> <span class="nv">$bandwidth</span> <span class="k">))</span>kbps burst 5k prio <span class="nv">$mark</span>
+
+    <span class="c"># netfilter packet marking rule</span>
+    <span class="c">#iptables -t mangle -A INPUT -i $NETCARD -s $ip -j CONNMARK --set-mark $mark</span>
+    iptables <span class="nt">-I</span> FORWARD <span class="nt">-i</span> <span class="nv">$NETCARD</span> <span class="nt">-s</span> <span class="nv">$ip</span> <span class="nt">-j</span> CONNMARK <span class="nt">--set-mark</span> <span class="nv">$mark</span>
+
+    <span class="c"># filter that bind the two</span>
+    tc filter add dev <span class="nv">$NETCARD</span> parent 1:0 protocol ip prio <span class="nv">$mark</span> handle <span class="nv">$mark</span> fw flowid 1:<span class="nv">$mark</span>
+
+    <span class="nb">echo</span> <span class="s2">"IP </span><span class="nv">$ip</span><span class="s2"> is attached to mark </span><span class="nv">$mark</span><span class="s2"> and limited to </span><span class="nv">$bandwidth</span><span class="s2"> kbps"</span>
+<span class="k">done</span>
+
+<span class="c"># propagate netfilter marks on connections</span>
+iptables <span class="nt">-t</span> mangle <span class="nt">-A</span> POSTROUTING <span class="nt">-j</span> CONNMARK <span class="nt">--restore-mark</span>
+</code></pre></div></div>
+
+  </section>
+  
+</article>
+
+
+
+      </div>
+
+      <footer class="footer">
+  <span class="footer__copyright">&copy; 2021 Clément Durand. All rights reserved.</span>
+</footer>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+    </div>
+  </body>
+</html>

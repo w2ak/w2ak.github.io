@@ -1,0 +1,2051 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hello there!</title>
+    <description>My front to the Worst Wild Web</description>
+    <link>https://www.neze.fr/</link>
+    <atom:link href="https://www.neze.fr/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Sun, 21 Nov 2021 18:08:41 +0100</pubDate>
+    <lastBuildDate>Sun, 21 Nov 2021 18:08:41 +0100</lastBuildDate>
+    <generator>Jekyll v4.0.1</generator>
+    
+      <item>
+        <title>Linux, Touchscreen and Trouble</title>
+        <description>&lt;p&gt;&lt;em&gt;Solutions to several problems I had with linux on a touchscreen-equiped laptop.&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;When installing linux on laptop, I started having a few problems with the
+touchscreen, especially when trying to rotate or extend the screen.&lt;/p&gt;
+
+&lt;h1 id=&quot;know-how-to-identify-your-devices&quot;&gt;Know how to identify your devices&lt;/h1&gt;
+
+&lt;p&gt;To manipulate input devices, I use &lt;code class=&quot;highlighter-rouge&quot;&gt;xinput&lt;/code&gt;. To deal with displays, I use
+&lt;code class=&quot;highlighter-rouge&quot;&gt;xrandr&lt;/code&gt; or the graphical interface. I need the identifiers of my devices
+in order to be able to interact with these.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;xinput list &lt;span class=&quot;nt&quot;&gt;--long&lt;/span&gt; | less
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;By examining the output of xinput, you can identify the device mentioning
+“touch” and get its id. In my case:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TOUCHSCREEN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ATML1000:00 E206:5883'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Xrandr can tell you how your monitors are named.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;xrandr | less
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In my case, I get:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;MAINSCREEN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'eDP-1'&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;HDMISCREEN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'HDMI-1'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;how-to-disable-the-touchscreen&quot;&gt;How to disable the touchscreen&lt;/h1&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;xinput &lt;span class=&quot;nt&quot;&gt;--enable&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TOUCHSCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+xinput &lt;span class=&quot;nt&quot;&gt;--disable&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TOUCHSCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;My setup is a simple script that flips the touchscreen on and off.&lt;/p&gt;
+
+&lt;details&gt;&lt;summary&gt;Code&lt;/summary&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;TOUCHSCREEN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ATML1000:00 E206:5883'&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SAYFILE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mktemp&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;3&amp;gt;&amp;amp;1 4&amp;gt;&amp;amp;2 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SAYFILE&lt;/span&gt; 2&amp;gt;&amp;amp;1
+say_cleanup &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  notify-send &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$SAYFILE&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;1&amp;gt;&amp;amp;3 2&amp;gt;&amp;amp;4
+  &lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$SAYFILE&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;trap &lt;/span&gt;say_cleanup EXIT
+&lt;span class=&quot;k&quot;&gt;fi
+
+&lt;/span&gt;is_enabled &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;xinput &lt;span class=&quot;nt&quot;&gt;--list-props&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TOUCHSCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Device Enabled&quot;&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-F&lt;/span&gt;: &lt;span class=&quot;s1&quot;&gt;'{ print $2 }'&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$value&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-gt&lt;/span&gt; 0
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if &lt;/span&gt;is_enabled&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+  &lt;/span&gt;xinput &lt;span class=&quot;nt&quot;&gt;--disable&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TOUCHSCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&amp;amp;2 &lt;span class=&quot;s2&quot;&gt;&quot;Touch screen disabled.&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;else
+  &lt;/span&gt;xinput &lt;span class=&quot;nt&quot;&gt;--enable&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TOUCHSCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&amp;amp;2 &lt;span class=&quot;s2&quot;&gt;&quot;Touch screen enabled.&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;/details&gt;
+
+&lt;h1 id=&quot;extending-the-screen&quot;&gt;Extending the screen&lt;/h1&gt;
+
+&lt;p&gt;When using the graphical interface or &lt;code class=&quot;highlighter-rouge&quot;&gt;xrandr&lt;/code&gt; to extend your screen, you might
+experience some trouble with the touchscreen.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;xrandr &lt;span class=&quot;nt&quot;&gt;--output&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MAINSCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--mode&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1920x1080&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--primary&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+       &lt;span class=&quot;nt&quot;&gt;--output&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$HDMISCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--mode&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1920x1080&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--right-of&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MAINSCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In my case, the touch area gets mapped to the whole display area: if I touch on
+the right part of the touchscreen, it clicks on the right display.&lt;/p&gt;
+
+&lt;p&gt;A simple solution to that is to tell &lt;code class=&quot;highlighter-rouge&quot;&gt;xinput&lt;/code&gt; that the touchscreen corresponds
+only to the main display.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;xinput map-to-output &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TOUCHSCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MAINSCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;rotating-the-screen&quot;&gt;Rotating the screen&lt;/h1&gt;
+
+&lt;p&gt;I use &lt;code class=&quot;highlighter-rouge&quot;&gt;xrandr&lt;/code&gt; to rotate the screen in order to use the “tablet” mode.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;xrandr &lt;span class=&quot;nt&quot;&gt;--output&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MAINSCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--rotate&lt;/span&gt; inverted
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;However, the touchscreen does not get “rotated” and you can guess that the
+result is a huge mess. This can be solved by using xinput.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;xinput set-prop &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TOUCHSCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Coordinate Transformation Matrix&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;-1 0 1 0 -1 1 0 0 1&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Here’s how my script looks like.&lt;/p&gt;
+
+&lt;details&gt;&lt;summary&gt;Code&lt;/summary&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;MAINSCREEN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;eDP-1
+&lt;span class=&quot;nv&quot;&gt;TOUCHSCREEN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ATML1000:00 E206:5883'&lt;/span&gt;
+
+left &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;rotation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;left
+  &lt;span class=&quot;nv&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0 -1 1 1 0 0 0 0 1&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+right &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;rotation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;right
+  &lt;span class=&quot;nv&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0 1 0 -1 0 1 0 0 1&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+normal &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;rotation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;normal
+  &lt;span class=&quot;nv&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;1 0 0 0 1 0 0 0 1&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+inverted &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;rotation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;inverted
+  &lt;span class=&quot;nv&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;-1 0 1 0 -1 1 0 0 1&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$# &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-lt&lt;/span&gt; 1 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+  &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;1
+&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  xrandr &lt;span class=&quot;nt&quot;&gt;--output&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$MAINSCREEN&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--rotate&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$rotation&lt;/span&gt;
+  xinput set-prop &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TOUCHSCREEN&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Coordinate Transformation Matrix&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$matrix&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;/details&gt;
+</description>
+        <pubDate>Sun, 10 May 2020 10:21:29 +0200</pubDate>
+        <link>https://www.neze.fr/2020/linux-touchscreen-and-trouble/</link>
+        <guid isPermaLink="true">https://www.neze.fr/2020/linux-touchscreen-and-trouble/</guid>
+        
+        <category>howto</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>GPG Transition Statement</title>
+        <description>&lt;p&gt;The original signed transition statement is available
+&lt;a href=&quot;/static/transition.20180813.txt.asc&quot;&gt;here&lt;/a&gt;,
+&lt;a href=&quot;https://keybase.pub/neze/transition.20180813.txt.asc&quot;&gt;here&lt;/a&gt; or even
+&lt;a href=&quot;https://gist.github.com/w2ak/38b1bc1e9908d83d0672ba1853358184&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Signatures can be verified by &lt;code class=&quot;highlighter-rouge&quot;&gt;gpg --verify transition.20180813.txt.asc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Mon Aug 13 12:03:33 JST 2018&lt;/p&gt;
+
+&lt;p&gt;For a number of reasons, I’ve set up a new PGP key for my e-mail address
+&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;clement[at]neze[dot]fr&amp;gt;&lt;/code&gt;, and will be transitioning this ID away from my
+old key.&lt;/p&gt;
+
+&lt;p&gt;The old key will continue to support the ID for some time but I would
+rather all future correspondance to come to the new one. I would also like
+this new key to be re-integrated into the web of trust. This message is
+signed by both keys to certify the transition.&lt;/p&gt;
+
+&lt;p&gt;The old key was:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pub   rsa3744/0x15247DF0CB359C59 2016-10-02
+      Key fingerprint = 9646 DC24 1946 7375 C6B5  9DEE 1524 7DF0 CB35 9C59
+sub   rsa2048/0x2F1F95F7738D7D23 2016-10-02
+sub   rsa2048/0xB1426D0D5FE763A7 2016-10-02
+sub   rsa2048/0x74C6A36D0333EC45 2016-10-02
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And the new key is:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pub   nistp521/0xEF2D00C6CAA88D40 2017-10-28
+      Key fingerprint = 1144 A011 11B4 FB8A 179B  5B67 EF2D 00C6 CAA8 8D40
+sub   nistp521/0x41CF2D0211BAB362 2017-10-28
+sub   nistp521/0x83253CC3161D3A90 2017-10-28
+sub   nistp521/0x85A38C3277EC96AA 2017-10-28
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;To fetch the new key, you can get it with one of the following methods:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Get it from a key server.&lt;/p&gt;
+
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gpg --recv-keys CAA88D40
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Get it from my server.&lt;/p&gt;
+
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl -Ls https://www.neze.fr/CAA88D40.txt | gpg --import
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Get it from Keybase.&lt;/p&gt;
+
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl -Ls https://keybase.io/neze/pgp_keys.asc | gpg --import
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;keybase pgp pull neze
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you already knew my old key, you can now verify that the new one is signed
+by the old one.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gpg --check-sigs CAA88D40
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If you do not know my old key or just want to be double extra paranoid, you
+can check the fingerprint against the above.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gpg --fingerprint CAA88D40
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If you are satisfied that you’ve got the right key and it corresponds to the
+right person, I’d appreciate it if you would sign my key.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gpg --sign-key CAA88D40
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then, please make your signature available by the method of your choice. My
+prefered method would be that you send me the newly signed key by e-mail so
+that I can update the web of trust myself.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gpg --armor --export CAA88D40
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Please let me know if there is any trouble, or if you need anything more, and
+sorry for the inconvenience.&lt;/p&gt;
+
+&lt;p&gt;Regards,&lt;/p&gt;
+
+&lt;p&gt;Clement Durand
+@neze&lt;/p&gt;
+</description>
+        <pubDate>Mon, 13 Aug 2018 00:00:00 +0200</pubDate>
+        <link>https://www.neze.fr/2018/gpg-transition/</link>
+        <guid isPermaLink="true">https://www.neze.fr/2018/gpg-transition/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Vim cheatsheet</title>
+        <description>&lt;p&gt;&lt;em&gt;Useful shortcuts in Vim&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;main-vim-shortcuts&quot;&gt;Main vim shortcuts&lt;/h1&gt;
+
+&lt;h1 id=&quot;git-plugins&quot;&gt;Git plugins&lt;/h1&gt;
+
+&lt;p&gt;&lt;em&gt;Making the best of &lt;code class=&quot;highlighter-rouge&quot;&gt;vim-gitgutter&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;vim-fugitive&lt;/code&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Jump between hunks&lt;br /&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;]c&lt;/code&gt;&lt;br /&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;[c&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Stage and unstage hunks&lt;br /&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;Leader&amp;gt;hs&lt;/code&gt;&lt;br /&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;Leader&amp;gt;hu&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Add current file&lt;br /&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;:Gadd %&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Commit&lt;br /&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;:Gcommit&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Checkout in the buffer&lt;br /&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;:Gread&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Tue, 06 Feb 2018 00:00:00 +0100</pubDate>
+        <link>https://www.neze.fr/2018/vim-cheatsheet/</link>
+        <guid isPermaLink="true">https://www.neze.fr/2018/vim-cheatsheet/</guid>
+        
+        <category>howto</category>
+        
+        <category>vim</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Including figures in two-column LaTeX documents</title>
+        <description>&lt;p&gt;&lt;em&gt;On how to correctly put figures in your LaTeX document when you have two
+columns.&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;This post is biased for some parameters are chosen to correctly put figures
+in conference papers.&lt;/p&gt;
+
+&lt;p&gt;Assume that you want to include a picture in your two-column document. The
+basic way to do this is to use the &lt;code class=&quot;highlighter-rouge&quot;&gt;figure&lt;/code&gt; environment along with the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;\includegraphics&lt;/code&gt; command from the &lt;code class=&quot;highlighter-rouge&quot;&gt;graphicx&lt;/code&gt; package. The relevant parts
+of the code are detailed below.&lt;/p&gt;
+
+&lt;div class=&quot;language-tex highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;\documentclass&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;[conference]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;IEEEtran&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;% ...&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;\usepackage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;graphicx&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;% ...&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;\begin{document}&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;% ...&lt;/span&gt;
+
+  &lt;span class=&quot;nt&quot;&gt;\begin{figure}&lt;/span&gt;[!ht]
+    &lt;span class=&quot;k&quot;&gt;\center&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;\includegraphics&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;[width=\linewidth]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;graphics/schema.jpg&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;\caption&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;\label&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;schema&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;My beautiful schema&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;\end{figure}&lt;/span&gt;
+
+  As shown in figure &lt;span class=&quot;k&quot;&gt;\ref&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;schema&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;, this model allows...
+
+  &lt;span class=&quot;c&quot;&gt;% ...&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;\end{document}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, if your picture is wide and it is not readable only in one column,
+you can make it span on the full width of the paper.&lt;/p&gt;
+
+&lt;div class=&quot;language-tex highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;\documentclass&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;[conference]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;IEEEtran&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;% ...&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;\usepackage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;graphicx&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;% ...&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;\begin{document}&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;% ...&lt;/span&gt;
+
+  &lt;span class=&quot;nt&quot;&gt;\begin{figure*}&lt;/span&gt;[!ht]
+    &lt;span class=&quot;k&quot;&gt;\center&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;\includegraphics&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;[width=\textwidth]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;graphics/schema.jpg&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;\caption&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;\label&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;schema&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;My beautiful schema&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;\end{figure*}&lt;/span&gt;
+
+  As shown in figure &lt;span class=&quot;k&quot;&gt;\ref&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;schema&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;, this model allows...
+
+  &lt;span class=&quot;c&quot;&gt;% ...&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;\end{document}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;There are actually only two differences. The &lt;code class=&quot;highlighter-rouge&quot;&gt;figure*&lt;/code&gt; environment is
+used instead of &lt;code class=&quot;highlighter-rouge&quot;&gt;figure&lt;/code&gt;, and the width of the included graphics is
+&lt;code class=&quot;highlighter-rouge&quot;&gt;\textwidth&lt;/code&gt; instead of &lt;code class=&quot;highlighter-rouge&quot;&gt;\linewidth&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you want to adjust the size of your image, you can put a number in the
+length. A good way to do this is to write &lt;code class=&quot;highlighter-rouge&quot;&gt;width=0.8\linewidth&lt;/code&gt; or
+&lt;code class=&quot;highlighter-rouge&quot;&gt;width=0.8\textwidth&lt;/code&gt; for example, depending on your use case.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 31 Jan 2018 00:00:00 +0100</pubDate>
+        <link>https://www.neze.fr/2018/twocolumn-figures/</link>
+        <guid isPermaLink="true">https://www.neze.fr/2018/twocolumn-figures/</guid>
+        
+        <category>howto</category>
+        
+        <category>tex</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>VPS First Configuration</title>
+        <description>&lt;p&gt;&lt;em&gt;How I would configure my vps for the first time. Instructions on a Debian host.&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;I will call my computer &lt;strong&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;laptop&lt;/code&gt;&lt;/strong&gt;, my server &lt;strong&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;server&lt;/code&gt;&lt;/strong&gt; at the address
+&lt;strong&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;example.com&lt;/code&gt;&lt;/strong&gt; with ip &lt;strong&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;93.184.216.34&lt;/code&gt;&lt;/strong&gt;.
+On both sides my username will be &lt;strong&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;neze&lt;/code&gt;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;initial-setup-of-access&quot;&gt;Initial setup of access&lt;/h1&gt;
+
+&lt;h2 id=&quot;remove-root-ssh-access&quot;&gt;Remove root ssh access&lt;/h2&gt;
+
+&lt;h3 id=&quot;remove-password-root-ssh-access&quot;&gt;Remove password root ssh access&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Create an ssh key on &lt;code class=&quot;highlighter-rouge&quot;&gt;laptop&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop ~ % ssh-keygen &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; ecdsa &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; 521 &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; ~/.ssh/id_example.com &lt;span class=&quot;nt&quot;&gt;-C&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;neze@laptop&quot;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# -t: cryptographic algorithm. Values: rsa,ecdsa,ed25519.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# -b: key size. Values: minimum 1024 for rsa (at least 2048 advised),&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#     256 384 or 521 for ecdsa, no value for ed25519&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;em&gt;This command will ask for a passphrase. If you do not trust your laptop, choose a strong passphrase.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Configure your laptop to correctly use the ssh key.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop ~ % &lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt;&amp;gt; ~/.ssh/config
+Host example.com
+    HostName 93.184.216.34
+    IdentityFile ~/.ssh/id_example.com
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Copy the identity file to &lt;code class=&quot;highlighter-rouge&quot;&gt;root@server&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop ~ % ssh-copy-id &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; ~/.ssh/id_example.com.pub root@example.com
+&lt;span class=&quot;c&quot;&gt;# -i: Path to the public identity file.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Check that you can connect to &lt;code class=&quot;highlighter-rouge&quot;&gt;root@server&lt;/code&gt; without password.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop ~ % ssh root@example.com
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Keep this shell open until you finish this part.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Disable password login for root.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % vi /etc/ssh/sshd_config
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gd&quot;&gt;-PermitRootLogin yes
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+PermitRootLogin prohibit-password
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % systemctl restart ssh.service
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Check in another terminal that you still have access to the server.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop ~ % ssh root@example.com &lt;span class=&quot;s2&quot;&gt;&quot;echo OK&quot;&lt;/span&gt;
+OK
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Check that you do not have password access anymore.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop ~ % ssh &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;PreferredAuthentications&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password root@example.com
+root@93.184.216.34 password:
+Permission denied, please try again.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;create-your-main-user&quot;&gt;Create your main user&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Create your user.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % adduser neze
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Put the user in the sudo group.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % usermod &lt;span class=&quot;nt&quot;&gt;-aG&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;neze
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;groups &lt;/span&gt;neze
+neze: neze &lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Copy your ssh public key to this user on the server.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop ~ % ssh-copy-id &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; ~/.ssh/id_example.com.pub neze@example.com
+neze@93.184.216.34 password:
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Check that you have access to your user’s shell.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop ~ % ssh neze@example.com &lt;span class=&quot;s2&quot;&gt;&quot;echo OK&quot;&lt;/span&gt;
+OK
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Disable root login&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % vi /etc/ssh/sshd_config
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gd&quot;&gt;-PermitRootLogin prohibit-password
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+PermitRootLogin no
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % systemctl restart ssh.service
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Check that you still have access to your user’s shell.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop ~ % ssh neze@example.com &lt;span class=&quot;s2&quot;&gt;&quot;echo OK&quot;&lt;/span&gt;
+OK
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Maybe completely disable password authentication.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop ~ % ssh neze@example.com
+neze@server ~ % &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;vi /etc/ssh/sshd_config
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gd&quot;&gt;-PasswordAuthentication yes
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+PasswordAuthentication no
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@server ~ % &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl restart ssh.service
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;setup-a-basic-firewall&quot;&gt;Setup a basic firewall&lt;/h2&gt;
+
+&lt;h3 id=&quot;block-everything-but-ssh&quot;&gt;Block everything but SSH&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Be careful with this section.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Good to know:&lt;/strong&gt; If you do a mistake during firewall setup, a server reboot
+will clean the filters and you will be able to restart the firewall part.&lt;/p&gt;
+
+&lt;p&gt;A commented version of the iptables rules is available &lt;a href=&quot;https://gist.github.com/w2ak/88cf0aad6cb58cfc0c5083c467eb4619&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# The three first lines:&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;## Create a temporary directory in /tmp&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;## Make sure you own the directory and nobody can write/read in it&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;## Empty the directory&lt;/span&gt;
+root@server ~ % &lt;span class=&quot;nv&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mktemp&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;chown&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-R&lt;/span&gt; root:root &lt;span class=&quot;nv&quot;&gt;$D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;chmod&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-R&lt;/span&gt; 700 &lt;span class=&quot;nv&quot;&gt;$D&lt;/span&gt;
+root@server ~ % find &lt;span class=&quot;nv&quot;&gt;$D&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-mindepth&lt;/span&gt; 1 &lt;span class=&quot;nt&quot;&gt;-delete&lt;/span&gt;
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$D&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;/iptables
+*filter
+:INPUT DROP
+:FORWARD DROP
+:OUTPUT ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -m conntrack --ctstate INVALID -j REJECT --reject-with icmp-host-unreachable
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 22 -j ACCEPT
+-A INPUT -m limit --limit 30/min -j LOG --log-prefix &quot;iptables INPUT denied: &quot; --log-level 7
+-A FORWARD -m limit --limit 30/min -j LOG --log-prefix &quot;iptables FORWARD denied: &quot; --log-level 7
+COMMIT
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;root@server ~ % iptables-apply &lt;span class=&quot;nv&quot;&gt;$D&lt;/span&gt;/iptables
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Check that you can still connect to your server and that the output of the
+command &lt;code class=&quot;highlighter-rouge&quot;&gt;iptables-save&lt;/code&gt; does look like what you typed up there.&lt;/p&gt;
+
+&lt;p&gt;Do not close this terminal &lt;i class=&quot;fa fa-heart&quot;&gt;&lt;/i&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;make-these-iptables-permanent&quot;&gt;Make these iptables permanent&lt;/h3&gt;
+
+&lt;p&gt;You are going to save these iptables, and use a script to automatically apply
+them whenever network interfaces are set up.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % &lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;firewall
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;cp&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$D&lt;/span&gt;/iptables firewall/iptables.rules
+root@server ~ % curl &lt;span class=&quot;nt&quot;&gt;-Ls&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'https://gist.githubusercontent.com/w2ak/88cf0aad6cb58cfc0c5083c467eb4619/raw/2da598837dfa122e8b79b1326b4242b1d88b87af/restore.sh'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; firewall/restore.sh
+&lt;span class=&quot;c&quot;&gt;# It is advised to read and eventually edit restore.sh before making it executable&lt;/span&gt;
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;700 firewall/restore.sh
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;ln&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;/firewall/restore.sh /etc/network/if-pre-up.d/iptables
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The script will be downloaded with ‘curl’. It is actually the &lt;code class=&quot;highlighter-rouge&quot;&gt;restore.sh&lt;/code&gt; script
+from &lt;a href=&quot;https://gist.github.com/w2ak/88cf0aad6cb58cfc0c5083c467eb4619&quot;&gt;this page&lt;/a&gt;, which you can also manually download and put on your
+server. If you do so, it will look like this.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# First download 'restore.sh' and know where it is in your laptop&lt;/span&gt;
+neze@laptop ~ % scp Downloads/restore.sh neze@example.com:.
+neze@laptop ~ % ssh neze@example.com
+...
+neze@server ~ % &lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt;
+root@server ~neze % &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;firewall
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; ~neze/restore.sh firewall/.
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;chown &lt;/span&gt;root:root firewall/restore.sh
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;700 firewall/restore.sh
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;ln&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;/firewall/restore.sh /etc/network/if-pre-up.d/iptables
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;web-server-setup&quot;&gt;Web server setup&lt;/h1&gt;
+
+&lt;h2 id=&quot;install-a-lamp-server&quot;&gt;Install a LAMP server&lt;/h2&gt;
+
+&lt;p&gt;Get the following software to have a basic LAMP server. If you only want simple
+static pages you can avoid downloading the &lt;code class=&quot;highlighter-rouge&quot;&gt;php&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;mysql&lt;/code&gt; related software.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % apt-get install acl apache2 php mysql-server libapache2-mod-php php-mysql
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;setup-a-basic-static-website&quot;&gt;Setup a basic static website&lt;/h2&gt;
+
+&lt;h3 id=&quot;create-your-tree&quot;&gt;Create your tree&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Careful&lt;/strong&gt;: try to respect the user that is executing the commands in the following
+example. At first you need to be root, but try to avoid being root when the example
+doesn’t use it.&lt;/p&gt;
+
+&lt;p&gt;Create the directory in which you will put your website, then set the correct
+permissions.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Create the directories&lt;/span&gt;
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; /var/www/example.com/html /var/www/example.com/logs
+&lt;span class=&quot;c&quot;&gt;# Allow minimum access to /var/www&lt;/span&gt;
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;751 /var /var/www
+&lt;span class=&quot;c&quot;&gt;# Allow only root access to /var/www/example.com&lt;/span&gt;
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;chmod&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-R&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;rwX,g&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;rX,o-rwx /var/www/example.com
+&lt;span class=&quot;c&quot;&gt;# Allow others to go through /var/www/example.com&lt;/span&gt;
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;o+x /var/www/example.com
+&lt;span class=&quot;c&quot;&gt;# Add sticky bit (protects ownership) to /var/www/example.com/html&lt;/span&gt;
+root@server ~ % &lt;span class=&quot;nb&quot;&gt;chmod&lt;/span&gt; +s /var/www/example.com/html
+&lt;span class=&quot;c&quot;&gt;# Allow reading access for www-data (the web server user) to /var/www/example.com/html&lt;/span&gt;
+root@server ~ % setfacl &lt;span class=&quot;nt&quot;&gt;-Rm&lt;/span&gt; d:u:www-data:r-X,u:www-data:r-X /var/www/example.com/html
+&lt;span class=&quot;c&quot;&gt;# Allow writing access for my user&lt;/span&gt;
+root@server ~ % setfacl &lt;span class=&quot;nt&quot;&gt;-Rm&lt;/span&gt; d:u:neze:rwX,u:neze:rwX /var/www/example.com/html
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Create &lt;strong&gt;as your user&lt;/strong&gt; (not root) the first html page. &lt;em&gt;Do not create &lt;code class=&quot;highlighter-rouge&quot;&gt;index.html&lt;/code&gt;
+yet, it will allow you to perform a basic check.&lt;/em&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@server ~ % vim /var/www/example.com/html/first.html
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gi&quot;&gt;+&amp;lt;html&amp;gt;
++  &amp;lt;head&amp;gt;
++    &amp;lt;title&amp;gt;My first page&amp;lt;/title&amp;gt;
++  &amp;lt;/head&amp;gt;
++  &amp;lt;body&amp;gt;
++    &amp;lt;h1&amp;gt;Super beautiful title&amp;lt;/h1&amp;gt;
++    &amp;lt;p&amp;gt;For a super beautiful website.&amp;lt;/p&amp;gt;
++  &amp;lt;/body&amp;gt;
++&amp;lt;/html&amp;gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Check that the file you just created is owned by the &lt;code class=&quot;highlighter-rouge&quot;&gt;root&lt;/code&gt; group.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@server ~ % &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-lah&lt;/span&gt; /var/www/example.com/html
+total 12K
+drwsrws---+ 2 root root 4,0K Dec  1 10:04 &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+drwxrwx---+ 4 root root 4,0K Dec  1 09:50 ..
+&lt;span class=&quot;nt&quot;&gt;-rw-rw----&lt;/span&gt;+ 1 neze root    0 Dec  1 10:04 first.html
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;configure-the-web-server-to-deliver-the-website&quot;&gt;Configure the web server to deliver the website&lt;/h3&gt;
+
+&lt;p&gt;Create a basic configuration file for this website.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % vim /etc/apache2/sites-available/example.com.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gi&quot;&gt;+&amp;lt;VirtualHost *:80&amp;gt;
++  ServerAdmin neze@example.com
++  ServerName example.com
++  DocumentRoot /var/www/example.com/html
++
++  ErrorLog /var/www/example.com/logs/error.log
++  CustomLog /var/www/example.com/logs/access.log combined
++
++  &amp;lt;Directory /var/www/example.com/html&amp;gt;
++    Options -Indexes -FollowSymLinks
++    DirectoryIndex index.html index.php
++    AllowOverride None
++    Order allow,deny
++    Allow from all
++    Require all granted
++  &amp;lt;/Directory&amp;gt;
++&amp;lt;/VirtualHost&amp;gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Disable every website enabled by apache, then enable your own.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; /etc/apache2/sites-enabled
+000-default
+root@server ~ % a2dissite 000-default
+root@server ~ % a2ensite example.com
+root@server ~ % systemctl restart apache2.service
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Check that you have access to the website &lt;strong&gt;from your server&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# This should give &quot;403 forbidden&quot; you don't have permission.&lt;/span&gt;
+neze@server ~ % curl &lt;span class=&quot;nt&quot;&gt;-Ls&lt;/span&gt; localhost
+&lt;span class=&quot;c&quot;&gt;# This should show you the web page you created.&lt;/span&gt;
+neze@server ~ % curl &lt;span class=&quot;nt&quot;&gt;-Ls&lt;/span&gt; localhost/first.html
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Open the &lt;code class=&quot;highlighter-rouge&quot;&gt;http&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;https&lt;/code&gt; ports in the firewall.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % vim ~/firewall/iptables.rules
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; -A INPUT -p icmp -j ACCEPT
+ -A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 22 -j ACCEPT
+&lt;span class=&quot;gi&quot;&gt;+-A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 80 -j ACCEPT
++-A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 443 -j ACCEPT
+&lt;/span&gt; -A INPUT -m limit --limit 30/min -j LOG --log-prefix &quot;iptables INPUT denied: &quot; --log-level 7
+ -A FORWARD -m limit --limit 30/min -j LOG --log-prefix &quot;iptables FORWARD denied: &quot; --log-level 7
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % iptables-apply ~/firewall/iptables.rules
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Check in your web browser on your computer that you &lt;em&gt;do not&lt;/em&gt; have access to
+&lt;code class=&quot;highlighter-rouge&quot;&gt;http://example.com/&lt;/code&gt; and that you do have access to &lt;code class=&quot;highlighter-rouge&quot;&gt;http://example.com/first.html&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;add-https-support&quot;&gt;Add https support&lt;/h2&gt;
+
+&lt;h3 id=&quot;obtain-ssl-certificates&quot;&gt;Obtain ssl certificates&lt;/h3&gt;
+
+&lt;p&gt;Install certbot to use &lt;a href=&quot;https://letsencrypt.org&quot;&gt;letsencrypt&lt;/a&gt; certificates. They
+are free SSL certificates that will allow you to have secure https websites
+access without having to pay an expensive Certificate Authority.
+Then, enable apache ssl support.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;certbot
+root@server ~ % a2enmod ssl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Ask Let’s Encrypt for a certificate for your web server. The &lt;code class=&quot;highlighter-rouge&quot;&gt;certbot&lt;/code&gt; utility
+will ask you for a valid e-mail (at least the first time).&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % certbot &lt;span class=&quot;nt&quot;&gt;--webroot&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--webroot-path&lt;/span&gt; /var/www/example.com/html &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; example.com certonly
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In the end, links to certificates should be available in the &lt;code class=&quot;highlighter-rouge&quot;&gt;letsencrypt&lt;/code&gt; folder.
+It is important to use the &lt;code class=&quot;highlighter-rouge&quot;&gt;live&lt;/code&gt; folder (see below) because this folder will
+always be valid, even when the certificates will be renewed (we’ll talk about
+renewal down there).&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; /etc/letsencrypt/live/example.com
+total 4
+lrwxrwxrwx 1 root root  31 Nov 23 12:37 cert.pem -&amp;gt; ../../archive/example.com/cert1.pem
+lrwxrwxrwx 1 root root  32 Nov 23 12:37 chain.pem -&amp;gt; ../../archive/example.com/chain1.pem
+lrwxrwxrwx 1 root root  36 Nov 23 12:37 fullchain.pem -&amp;gt; ../../archive/example.com/fullchain1.pem
+lrwxrwxrwx 1 root root  34 Nov 23 12:37 privkey.pem -&amp;gt; ../../archive/example.com/privkey1.pem
+&lt;span class=&quot;nt&quot;&gt;-rw-r--r--&lt;/span&gt; 1 root root 543 Sep 24 13:06 README
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;setup-ssl-in-the-website&quot;&gt;Setup ssl in the website&lt;/h3&gt;
+
+&lt;p&gt;Modify the configuration of your website for it to be available only with https.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % vim /etc/apache2/sites-available/example.com.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &amp;lt;VirtualHost *:80&amp;gt;
+&lt;span class=&quot;gi&quot;&gt;+  ServerAdmin neze@example.com
++  ServerName example.com
++  Redirect permanent / https://example.com/
++&amp;lt;/VirtualHost&amp;gt;
++&amp;lt;VirtualHost *:443&amp;gt;
++  SSLEngine on
++  SSLCertificateFile /etc/letsencrypt/live/example.com/cert.pem
++  SSLCertificateKeyFile /etc/letsencrypt/live/example.com/privkey.pem
++  SSLCertificateChainFile /etc/letsencrypt/live/example.com/chain.pem
++
+&lt;/span&gt;   ServerAdmin neze@example.com
+   ServerName example.com
+   DocumentRoot /var/www/example.com/html
+ 
+   ErrorLog /var/www/example.com/logs/error.log
+   CustomLog /var/www/example.com/logs/access.log combined
+ 
+   &amp;lt;Directory /var/www/example.com/html&amp;gt;
+     Options -Indexes -FollowSymLinks
+     DirectoryIndex index.html index.php
+     AllowOverride None
+     Order allow,deny
+     Allow from all
+     Require all granted
+   &amp;lt;/Directory&amp;gt;
+ &amp;lt;/VirtualHost&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Reload the &lt;code class=&quot;highlighter-rouge&quot;&gt;apache2&lt;/code&gt; server.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % systemctl reload apache2.service
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Check in your web browser (in this order) that you have access to
+&lt;code class=&quot;highlighter-rouge&quot;&gt;https://example.com/first.html&lt;/code&gt; and that &lt;code class=&quot;highlighter-rouge&quot;&gt;http://example.com/firts.html&lt;/code&gt; is
+redirected to the https version.&lt;/p&gt;
+
+&lt;h3 id=&quot;setup-automatic-ssl-certificates-renewal&quot;&gt;Setup automatic ssl certificates renewal&lt;/h3&gt;
+
+&lt;p&gt;The SSL certificates you obtained are valid for 60 days. This is the default
+and mandatory value with Let’s Encrypt certificates. You need to setup automatic
+renewal for these certificates.&lt;/p&gt;
+
+&lt;p&gt;First, try manual certificate renewal to understand what it does.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % which certbot
+/usr/bin/certbot
+root@server ~ % /usr/bin/certbot renew
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+
+&lt;span class=&quot;nt&quot;&gt;-------------------------------------------------------------------------------&lt;/span&gt;
+Processing /etc/letsencrypt/renewal/example.com.conf
+&lt;span class=&quot;nt&quot;&gt;-------------------------------------------------------------------------------&lt;/span&gt;
+Cert not yet due &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;renewal
+
+The following certs are not due &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;renewal yet:
+  /etc/letsencrypt/live/example.com/fullchain.pem &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;skipped&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+No renewals were attempted.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You can see that renewal will only be performed when needed. You can then simply
+setup a regular execution of this command (once every week for example).&lt;/p&gt;
+
+&lt;p&gt;Choose randomly a minute (here, &lt;strong&gt;33&lt;/strong&gt;), an hour (here, &lt;strong&gt;4&lt;/strong&gt;) and a day of the
+week (here, &lt;strong&gt;1&lt;/strong&gt;). Then, setup automatic renewal of your certificates.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % crontab &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; # m h  dom mon dow   command
+&lt;span class=&quot;gi&quot;&gt;+33 4 * * 1 /usr/bin/certbot renew
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;vpn-setup&quot;&gt;VPN setup&lt;/h1&gt;
+
+&lt;p&gt;&lt;strong&gt;WARNING&lt;/strong&gt;: This section is a work in progress.&lt;/p&gt;
+
+&lt;p&gt;Setup a VPN server with OpenVPN&lt;/p&gt;
+
+&lt;h2 id=&quot;the-concept&quot;&gt;The concept&lt;/h2&gt;
+
+&lt;p&gt;A Virtual Private Network is made to group devices (your server, a phone,
+a laptop) as if they were in the same network. In this context, your server
+will act as the VPN server, i.e., as the gateway or the main router of the
+network. When connected to the VPN, the devices should be able to access the
+other devices or the network including the server, and might if you enable it
+access the Internet through (acting as) your server.&lt;/p&gt;
+
+&lt;p&gt;This possibility to act as your server and access other devices makes security
+very important for the access to the VPN. For this purpose, authentication will
+be realized by using a system of SSL certificates and asymetric ciphering.&lt;/p&gt;
+
+&lt;p&gt;More precisely, you will create a certificate authority that I will call &lt;strong&gt;ca&lt;/strong&gt;
+and should be located on a safe machine if you want to be serious. The certificate
+authority will issue certificates for every actor of the VPN, including the
+server. In order to access the server, a client will need to own a valid
+certificate and its corresponding private key.&lt;/p&gt;
+
+&lt;p&gt;Here, the ciphering algorithms will use 2kiB RSA keys. Elliptic curves are not
+used because the current version of the OpenVPN client for iOS does not implement
+ECDSA support.&lt;/p&gt;
+
+&lt;h2 id=&quot;prepare-mentally&quot;&gt;Prepare mentally&lt;/h2&gt;
+
+&lt;p&gt;You need to prepare a few things in order to make sure that the architecture is
+clear in your head. This will avoid mistakes and help you go through the setup
+without too much unnecessary pain.&lt;/p&gt;
+
+&lt;h3 id=&quot;network-architecture&quot;&gt;Network architecture&lt;/h3&gt;
+
+&lt;p&gt;You will configure a server, still called &lt;strong&gt;server&lt;/strong&gt; because it is the same
+physical machine as your vps, and a client. Here it will be &lt;strong&gt;laptop&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;The openvpn server is located on your online machine (&lt;em&gt;example.com&lt;/em&gt;) and will
+listen on a specific port (here, &lt;strong&gt;993&lt;/strong&gt;) in udp or tcp (here, &lt;strong&gt;tcp&lt;/strong&gt;).&lt;/p&gt;
+
+&lt;p&gt;The private network will have a &lt;a href=&quot;https://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces&quot;&gt;private address space&lt;/a&gt;. In this
+tutorial we will use &lt;strong&gt;10.0.0.0/24&lt;/strong&gt;, i.e., addresses from 10.0.0.0 to
+10.0.0.255. The &lt;a href=&quot;https://en.wikipedia.org/wiki/Subnetwork&quot;&gt;network mask&lt;/a&gt; will then be &lt;strong&gt;255.255.255.0&lt;/strong&gt;. Do not
+hesitate to visit the links if there is something you do not understand.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Actors naming&lt;/strong&gt;: I usually name the actors with subdomains of the server’s
+domain. It allowed me for example to easily add them to my internal DNS zone.
+Here, the server will then be &lt;strong&gt;vpn.example.com&lt;/strong&gt;, and the client will be
+named &lt;strong&gt;laptop.example.com&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;certificates-and-keys-management&quot;&gt;Certificates and keys management&lt;/h3&gt;
+
+&lt;p&gt;We will use &lt;a href=&quot;https://github.com/OpenVPN/easy-rsa/releases/latest&quot;&gt;easy-rsa&lt;/a&gt; to manage keys and certificates. One easy-rsa
+instance is used as follows (details will be given later, no need to try now):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;You download and extract the archive available under the easy-rsa link&lt;/li&gt;
+  &lt;li&gt;You extract it in a folder that will be the easy-rsa instance&lt;/li&gt;
+  &lt;li&gt;You apply &lt;a href=&quot;https://gist.githubusercontent.com/w2ak/54ae736732258400f42845d6f67f1b3a/raw/c9bb2026c597961fc610020db39d557752b7d32e/easyrsa-bash-bug.patch&quot;&gt;this patch&lt;/a&gt; to fix a minor bug&lt;/li&gt;
+  &lt;li&gt;In this folder there is an executable &lt;code class=&quot;highlighter-rouge&quot;&gt;easyrsa&lt;/code&gt; that allows to perform almost
+every operation.&lt;/li&gt;
+  &lt;li&gt;There will be a &lt;code class=&quot;highlighter-rouge&quot;&gt;pki&lt;/code&gt; folder containing important files
+    &lt;ul&gt;
+      &lt;li&gt;ciphering parameters&lt;/li&gt;
+      &lt;li&gt;private keys&lt;/li&gt;
+      &lt;li&gt;certificates&lt;/li&gt;
+      &lt;li&gt;certificate requests&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A good practice is to compartimentalize, i.e., have a seperate easy-rsa instance
+for every actor in the vpn:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;One instance for the certificate authority on the machine &lt;strong&gt;ca&lt;/strong&gt; (possibly your
+laptop, preferably not your server)&lt;/li&gt;
+  &lt;li&gt;One instance for the server on the machine &lt;strong&gt;server&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;One instance for the client on the machine &lt;strong&gt;laptop&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;You can still, if you want, have only one instance for every actor. This means
+that the &lt;strong&gt;ca&lt;/strong&gt; instance will generate everything, including the keys of everybody.
+The tutorial assumes you are using separate instances.&lt;/p&gt;
+
+&lt;h2 id=&quot;create-and-manage-certificates&quot;&gt;Create and manage certificates&lt;/h2&gt;
+
+&lt;h3 id=&quot;prepare-a-blank-instance&quot;&gt;Prepare a blank instance&lt;/h3&gt;
+
+&lt;p&gt;You need to fix a minor bug in easy-rsa and do a little personalization. In this
+section, you will create your own easy-rsa archive and use it to create every
+instance.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Download the &lt;a href=&quot;https://github.com/OpenVPN/easy-rsa/releases/latest&quot;&gt;easy-rsa archive&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Download the &lt;a href=&quot;https://gist.githubusercontent.com/w2ak/54ae736732258400f42845d6f67f1b3a/raw/c9bb2026c597961fc610020db39d557752b7d32e/easyrsa-bash-bug.patch&quot;&gt;easy-rsa patch&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Apply the bug-fixing patch to your easy-rsa folder as follows&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop ~ % &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; ~/Downloads &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~/Downloads
+EasyRSA-3.0.3.tgz  easyrsa-bash-bug.patch
+neze@laptop Downloads % &lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;xzf EasyRSA-3.0.3.tgz
+neze@laptop Downloads % &lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;EasyRSA-3.0.3
+neze@laptop EasyRSA-3.0.3 % git apply ../easyrsa-bash-bug.patch
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;span class=&quot;lettrine&quot;&gt;&lt;i class=&quot;fa fa-exclamation-triangle&quot;&gt;&lt;/i&gt;&lt;/span&gt;
+If you have an error while applying the patch, it means that you probably
+copy-pasted the patch instead of saving it. Open the link in your browser then
+&lt;code class=&quot;highlighter-rouge&quot;&gt;File&amp;gt;Save&lt;/code&gt; it as &lt;code class=&quot;highlighter-rouge&quot;&gt;easyrsa-bash-bug.patch&lt;/code&gt; for example.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Create your own settings file&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop EasyRSA-3.0.3 % &lt;span class=&quot;nb&quot;&gt;cp &lt;/span&gt;vars.example vars
+neze@laptop EasyRSA-3.0.3 % vim vars
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gd&quot;&gt;-#set_var EASYRSA_REQ_COUNTRY   &quot;US&quot;
+-#set_var EASYRSA_REQ_PROVINCE  &quot;California&quot;
+-#set_var EASYRSA_REQ_CITY      &quot;San Francisco&quot;
+-#set_var EASYRSA_REQ_ORG       &quot;Copyleft Certificate Co&quot;
+-#set_var EASYRSA_REQ_EMAIL     &quot;me@example.net&quot;
+-#set_var EASYRSA_REQ_OU        &quot;My Organizational Unit&quot;
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+set_var EASYRSA_REQ_COUNTRY   &quot;FR&quot;
++set_var EASYRSA_REQ_PROVINCE  &quot;.&quot;
++set_var EASYRSA_REQ_CITY      &quot;Paris&quot;
++set_var EASYRSA_REQ_ORG       &quot;MyCAOrg&quot;
++set_var EASYRSA_REQ_EMAIL     &quot;whatever@example.com&quot;
++set_var EASYRSA_REQ_OU        &quot;MyVPNOrg&quot;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Pack your own archive. You will use it for every easy-rsa instance&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop Downloads % &lt;span class=&quot;nb&quot;&gt;ls
+&lt;/span&gt;EasyRSA-3.0.3.tgz EasyRSA-3.0.3  easyrsa-bash-bug.patch
+neze@laptop Downloads % &lt;span class=&quot;nb&quot;&gt;mv &lt;/span&gt;EasyRSA-3.0.3 custom-easyrsa
+neze@laptop Downloads % &lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;czf custom-easyrsa.tgz custom-easyrsa
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;initialize-the-ca-instance&quot;&gt;Initialize the CA instance&lt;/h3&gt;
+
+&lt;p&gt;Download and extract your custom easy-rsa wherever you want
+(preferably in a safe place) on the &lt;strong&gt;ca&lt;/strong&gt; machine.&lt;/p&gt;
+
+&lt;p&gt;Initialize a &lt;code class=&quot;highlighter-rouge&quot;&gt;pki&lt;/code&gt; then a certificate authority. The certificate authority will
+own everything that is shared between the actors of the VPN. The passphrase
+should be considered important.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@ca easy-rsa % ./easyrsa init-pki
+neze@ca easy-rsa % ./easyrsa build-ca
+&lt;span class=&quot;c&quot;&gt;# ...&lt;/span&gt;
+Enter PEM pass phrase: &lt;span class=&quot;k&quot;&gt;*********************************************&lt;/span&gt;
+Verifying - Enter PEM pass phrase: &lt;span class=&quot;k&quot;&gt;*********************************************&lt;/span&gt;
+Common Name &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;eg: your user, host, or server name&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Easy-RSA CA]:example.com
+&lt;span class=&quot;c&quot;&gt;# ...&lt;/span&gt;
+neze@ca easy-rsa % ssh server &lt;span class=&quot;s2&quot;&gt;&quot;openvpn --genkey --secret /dev/fd/1&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; pki/private/tls.key
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;initialize-the-server-instance&quot;&gt;Initialize the server instance&lt;/h3&gt;
+
+&lt;p&gt;Download and extract your custom easy-rsa. Then, initialize a &lt;code class=&quot;highlighter-rouge&quot;&gt;pki&lt;/code&gt; and create
+a request for your server.&lt;/p&gt;
+
+&lt;p&gt;A useful practice is to avoid putting a password to the server key, in order to be
+able to automatically start the VPN server.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server easy-rsa % ./easyrsa init-pki
+root@server easy-rsa % ./easyrsa gen-req vpn.example.com nopass
+&lt;span class=&quot;c&quot;&gt;# ...&lt;/span&gt;
+Common Name &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;eg: your user, host, or server name&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;vpn.example.com]:
+&lt;span class=&quot;c&quot;&gt;# ...&lt;/span&gt;
+root@server easy-rsa % ./easyrsa gen-dh
+&lt;span class=&quot;c&quot;&gt;# This process can be long and allows VPN connections to be faster&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This process put a &lt;strong&gt;private&lt;/strong&gt; key in &lt;code class=&quot;highlighter-rouge&quot;&gt;pki/private/vpn.example.com.key&lt;/code&gt;, and
+a certificate request in &lt;code class=&quot;highlighter-rouge&quot;&gt;pki/reqs/vpn.example.com.req&lt;/code&gt;. You also created
+&lt;strong&gt;secret&lt;/strong&gt; Diffie-Hellman parameters in &lt;code class=&quot;highlighter-rouge&quot;&gt;pki/dh.pem&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;initialize-the-client-instance&quot;&gt;Initialize the client instance&lt;/h3&gt;
+
+&lt;p&gt;This time you can (and maybe should) put a password. If you are creating an iOS
+client, though, I was not able to use password-protected keys yet.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@laptop easy-rsa % ./easyrsa init-pki
+neze@laptop easy-rsa % ./easyrsa gen-req laptop.example.com &lt;span class=&quot;c&quot;&gt;# nopass&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;issue-certificates-for-the-client-and-the-server&quot;&gt;Issue certificates for the client and the server&lt;/h3&gt;
+
+&lt;p&gt;With the CA instance, you now need to sign the requests from the server and the
+client. Make the two requests files you generated available to the &lt;strong&gt;ca&lt;/strong&gt;
+machine.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;You do not need to send anything else to the CA machine.&lt;/strong&gt; Only send the &lt;code class=&quot;highlighter-rouge&quot;&gt;.req&lt;/code&gt;
+files (for example by e-mail) using any non necessarily secure channel.&lt;/p&gt;
+
+&lt;p&gt;Then, simply sign the requests with the CA instance.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@ca ~ % &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; /path/to/requests
+laptop.example.com.req  vpn.example.com.req
+
+neze@ca easy-rsa % ./easyrsa import-req /path/to/requests/vpn.example.com vpn.example.com
+neze@ca easy-rsa % ./easyrsa import-req /path/to/requests/laptop.example.com laptop.example.com
+
+neze@ca easy-rsa % ./easyrsa sign-req server vpn.example.com
+&lt;span class=&quot;c&quot;&gt;# ...&lt;/span&gt;
+  Confirm request details: &lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# ...&lt;/span&gt;
+Enter pass phrase &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;pki/private/ca.key: &lt;span class=&quot;k&quot;&gt;*********************************************&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# ...&lt;/span&gt;
+neze@ca easy-rsa % ./easyrsa sign-req client laptop.example.com
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This generated two &lt;code class=&quot;highlighter-rouge&quot;&gt;.crt&lt;/code&gt; files in the &lt;code class=&quot;highlighter-rouge&quot;&gt;pki/issued&lt;/code&gt; folder. Send the following
+files to each actor:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;pki/ca.crt&lt;/code&gt; file is the certificate of the authority.&lt;/li&gt;
+  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;pki/private/tls.key&lt;/code&gt; file is the pre-shared key file for additional security.&lt;/li&gt;
+  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;pki/issued/__name__.example.com.crt&lt;/code&gt; is the certificate file for the
+corresponding actor.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It is better to use a secure channel this time because the &lt;code class=&quot;highlighter-rouge&quot;&gt;tls.key&lt;/code&gt; file is
+supposed to remain at least a minimum private.&lt;/p&gt;
+
+&lt;p&gt;Down there is an example to make it private. The client will need &lt;code class=&quot;highlighter-rouge&quot;&gt;openssl&lt;/code&gt; to
+decipher it.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;On the CA: prepare a secure archive to send to (for example) &lt;strong&gt;vpn&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@ca easy-rsa % &lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; build &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;700 build
+neze@ca easy-rss % &lt;span class=&quot;nb&quot;&gt;cp &lt;/span&gt;pki/ca.crt pki/private/tls.key pki/issued/vpn.example.com.crt pki/reqs/vpn.example.com.req build/.
+neze@ca easy-rsa % &lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;build
+neze@ca build % openssl req &lt;span class=&quot;nt&quot;&gt;-in&lt;/span&gt; vpn.example.com.req &lt;span class=&quot;nt&quot;&gt;-noout&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-pubkey&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-out&lt;/span&gt; vpn.example.com.pub
+neze@ca build % openssl rand 192 &lt;span class=&quot;nt&quot;&gt;-out&lt;/span&gt; vpn.example.com.tgz.key
+neze@ca build % &lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;cf - ca.crt tls.key vpn.example.com.crt | openssl aes-256-cbc &lt;span class=&quot;nt&quot;&gt;-pass&lt;/span&gt; file:vpn.example.com.tgz.key &lt;span class=&quot;nt&quot;&gt;-out&lt;/span&gt; vpn.example.com.tgz.enc
+neze@ca build % openssl rsautil &lt;span class=&quot;nt&quot;&gt;-encrypt&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-pubin&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-inkey&lt;/span&gt; vpn.example.com.pub &lt;span class=&quot;nt&quot;&gt;-in&lt;/span&gt; vpn.example.com.key &lt;span class=&quot;nt&quot;&gt;-out&lt;/span&gt; vpn.example.com.tgz.key.enc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Send the &lt;code class=&quot;highlighter-rouge&quot;&gt;*.enc&lt;/code&gt; files (two files) to the client.&lt;/li&gt;
+  &lt;li&gt;On the client: decrypt the data and get the files&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;neze@server tmp-folder % openssl rsautl &lt;span class=&quot;nt&quot;&gt;-decrypt&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ssl&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-inkey&lt;/span&gt; /path/to/easyrsa/pki/private/vpn.example.com.key &lt;span class=&quot;nt&quot;&gt;-in&lt;/span&gt; vpn.example.com.tgz.key.enc &lt;span class=&quot;nt&quot;&gt;-out&lt;/span&gt; vpn.example.com.tgz.key
+neze@server tmp-folder % openssl aes-256-cbc &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-pass&lt;/span&gt; file:vpn.example.com.tgz.key &lt;span class=&quot;nt&quot;&gt;-in&lt;/span&gt; vpn.example.com.tgz.enc | &lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;xf -
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Now you have access to &lt;code class=&quot;highlighter-rouge&quot;&gt;tls.key&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;ca.crt&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;vpn.example.com.crt&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;openvpn-server&quot;&gt;OpenVPN server&lt;/h2&gt;
+
+&lt;p&gt;In the server we will create a &lt;code class=&quot;highlighter-rouge&quot;&gt;vpn&lt;/code&gt; folder (here it will be &lt;code class=&quot;highlighter-rouge&quot;&gt;/root/vpn&lt;/code&gt;) that
+will eventually contain every necessary file for the OpenVPN server to run.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % &lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; /root/vpn &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /root/vpn
+root@server vpn % &lt;span class=&quot;nb&quot;&gt;cp&lt;/span&gt; /path/to/ca.crt /path/to/tls.key /path/to/vpn.example.com.crt /path/to/vpn.example.com.key /path/to/dh.pem &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+root@server vpn % &lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;400 tls.key vpn.example.com.key dh.pem
+root@server vpn % &lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;444 ca.crt vpn.example.com.crt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Once you are sure that you got the &lt;code class=&quot;highlighter-rouge&quot;&gt;.key&lt;/code&gt; file and &lt;code class=&quot;highlighter-rouge&quot;&gt;dh.pem&lt;/code&gt; file, you can delete
+the easy-rsa server instance if you want and if it is only the server’s instance.&lt;/p&gt;
+
+&lt;h3 id=&quot;server-config-file&quot;&gt;Server config file&lt;/h3&gt;
+
+&lt;p&gt;We will create a basic configuration. You should use absolute paths in this
+configuration because it could be used from any working directory. Remember
+that the default values mentioned before and used in the configuration file
+should be changed depending on what you chose.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server vpn % &lt;span class=&quot;nb&quot;&gt;touch &lt;/span&gt;server.conf &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;644 server.conf
+root@server vpn % vim server.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gi&quot;&gt;+port                    993
++proto                   tcp
++dev                     tun
++topology                subnet
++server                  10.0.0.0 255.255.255.0
++ifconfig-pool-persist   /root/vpn/ipp.txt
++push                    &quot;route 10.0.0.0 255.255.255.0&quot;
++client-to-client
++keepalive               10 120
++cipher                  AES-256-CBC
++max-clients             5
++user                    nobody
++group                   nogroup
++persist-key
++persist-tun
++log                     /root/vpn/server.log
++verb                    3
++
++dh                      /root/vpn/dh.pem
++
++tls-auth                /root/vpn/tls.key 0
++ca                      /root/vpn/ca.crt
++cert                    /root/vpn/vpn.example.com.crt
++key                     /root/vpn/vpn.example.com.key
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If you intend to use udp, you should slightly change the setup as follows&lt;/p&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; port                    993
+&lt;span class=&quot;gd&quot;&gt;-proto                   tcp
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+proto                   udp
++explicit-exit-notify
+&lt;/span&gt; dev                     tun
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You can quickly test that there is nothing wrong with this configuration by
+commenting out the logfile instruction and running openvpn.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server vpn % openvpn &lt;span class=&quot;nt&quot;&gt;--config&lt;/span&gt; server.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;client-config-files&quot;&gt;Client config files&lt;/h3&gt;
+
+&lt;p&gt;Then, you need to write sample configurations for the clients because their
+configuration needs to match the server’s.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server vpn % &lt;span class=&quot;nb&quot;&gt;touch &lt;/span&gt;client.conf &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;644 client.conf
+root@server vpn % vim client.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gi&quot;&gt;+client
++proto           tcp
++remote          example.com 993
++dev tun
++resolv-retry    infinite
++nobind
++persist-key
++persist-tun
++remote-cert-tls server
++cipher          AES-256-CBC
++ping            10
++ping-restart    30
++
++tls-auth        tls.key 1
++ca              ca.crt
++cert            client.crt
++key             client.key
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You should also create a sample self-contained configuration. Its use will be
+explained in the client part.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server vpn % &lt;span class=&quot;nb&quot;&gt;cp &lt;/span&gt;client.conf client.ovpn
+root@server vpn % vim client.ovpn
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ping-restart    30
+ 
+&lt;span class=&quot;gd&quot;&gt;-tls-auth        tls.key 1
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+key-direction   1
++&amp;lt;tls-auth&amp;gt;
++-----BEGIN OpenVPN Static key V1-----
++...
++-----END OpenVPN Static key V1-----
++&amp;lt;/tls-auth&amp;gt;
+&lt;/span&gt;&lt;span class=&quot;gd&quot;&gt;-ca              ca.crt
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+&amp;lt;ca&amp;gt;
++-----BEGIN CERTIFICATE-----
++...
++-----END CERTIFICATE-----
++&amp;lt;/ca&amp;gt;
+&lt;/span&gt;&lt;span class=&quot;gd&quot;&gt;-cert            client.crt
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+&amp;lt;cert&amp;gt;
++-----BEGIN CERTIFICATE-----
++...
++-----END CERTIFICATE-----
++&amp;lt;/cert&amp;gt;
+&lt;/span&gt;&lt;span class=&quot;gd&quot;&gt;-key             client.key
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+&amp;lt;key&amp;gt;
++-----BEGIN PRIVATE KEY-----
++...
++-----END PRIVATE KEY-----
++&amp;lt;/key&amp;gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;enable-your-openvpn-instance&quot;&gt;Enable your OpenVPN instance&lt;/h3&gt;
+
+&lt;p&gt;There are two independant steps in this process: setup and start the openvpn
+service, and open the necessary parts of the firewall.&lt;/p&gt;
+
+&lt;p&gt;We will start with the openvpn service. Create a link to your configuration in
+the openvpn folder.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % &lt;span class=&quot;nb&quot;&gt;ln&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; /root/vpn/server.conf /etc/openvpn/vpn.example.com.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Modify the openvpn configuration to automatically start your vpn server.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % vim /etc/default/openvpn
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gd&quot;&gt;-#AUTOSTART=&quot;all&quot;
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+AUTOSTART=&quot;all&quot;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % systemctl daemon-reload
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Enable and start the openvpn service, then check that your OpenVPN server is
+running.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % systemctl &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;openvpn.service
+root@server ~ % systemctl start openvpn@vpn.example.com.service
+root@server ~ % ps aux | &lt;span class=&quot;nb&quot;&gt;grep &lt;/span&gt;openvpn
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You also need to configure the firewall. You should open the correct port to
+enable clients to access your OpenVPN server.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % vim ~/firewall/iptables.rules
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; -A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 22 -j ACCEPT
+ -A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 80 -j ACCEPT
+ -A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 443 -j ACCEPT
+&lt;span class=&quot;gi&quot;&gt;+-A INPUT -p tcp -m conntrack --ctstate NEW -m tcp --dport 993 -j ACCEPT
+&lt;/span&gt; -A INPUT -m limit --limit 30/min -j LOG --log-prefix &quot;iptables INPUT denied: &quot; --log-level 7
+&lt;span class=&quot;gi&quot;&gt;+-A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+&lt;/span&gt; -A FORWARD -m limit --limit 30/min -j LOG --log-prefix &quot;iptables FORWARD denied: &quot; --log-level 7
+ COMMIT
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % iptables-apply ~/firewall/iptables.rules
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then, enable forwarding and set it persistent.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % sysctl &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; net.ipv4.conf.all.forwarding&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1
+root@server ~ % vim ~/firewall/restore.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; # enabling forwarding is necessary if you have a VPN
+&lt;span class=&quot;gd&quot;&gt;-# sysctl -w net.ipv4.conf.all.forwarding=1 &amp;gt;/dev/null 2&amp;gt;/dev/null
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+sysctl -w net.ipv4.conf.all.forwarding=1 &amp;gt;/dev/null 2&amp;gt;/dev/null
+&lt;/span&gt; # do not forget ipv6 firewall if your server is ipv6 enabled
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;additional-firewall-configuration&quot;&gt;Additional firewall configuration&lt;/h3&gt;
+
+&lt;p&gt;The firewall configuration you did only enabled connections between your VPN
+clients and your server. Right now, a VPN client can connect to the VPN server
+and has the same rights as any other machine trying to access your server.&lt;/p&gt;
+
+&lt;p&gt;Identify the &lt;code class=&quot;highlighter-rouge&quot;&gt;tun&lt;/code&gt; interface your openvpn server is working on. Here, it will
+be &lt;strong&gt;tun0&lt;/strong&gt;. Identify the interface connected to Internet. Here, it will be
+&lt;strong&gt;eth0&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % ip &lt;span class=&quot;nb&quot;&gt;link&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;internet-access&quot;&gt;Internet access&lt;/h4&gt;
+
+&lt;p&gt;Enable VPN clients to access Internet through (as) your VPN server.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % vim ~/firewall/iptables.rules
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+&lt;span class=&quot;gi&quot;&gt;+-A FORWARD -i tun0 -s 10.0.0.0/24 -o eth0 -j ACCEPT
+&lt;/span&gt; -A FORWARD -m limit --limit 30/min -j LOG --log-prefix &quot;iptables FORWARD denied: &quot; --log-level 7
+ COMMIT
+&lt;span class=&quot;gi&quot;&gt;+*nat
++:PREROUTING ACCEPT
++:INPUT ACCEPT
++:OUTPUT ACCEPT
++:POSTROUTING ACCEPT
++-A POSTROUTING -s 10.0.0.0/24 -o eth0 -j SNAT --to-source 93.184.216.34
++COMMIT
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % iptables-apply ~/firewall/iptables.rules
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;client-to-client-access&quot;&gt;Client-to-client access&lt;/h4&gt;
+
+&lt;p&gt;Enable VPN clients to access each other.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % vim ~/firewall/iptables.rules
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+ -A FORWARD -i tun0 -s 10.0.0.0/24 -o eth0 -j ACCEPT
+&lt;span class=&quot;gi&quot;&gt;+-A FORWARD -i tun0 -s 10.0.0.0/24 -o tun0 -d 10.0.0.0/24 -j ACCEPT
+&lt;/span&gt; -A FORWARD -m limit --limit 30/min -j LOG --log-prefix &quot;iptables FORWARD denied: &quot; --log-level 7
+ COMMIT
+ *nat
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@server ~ % iptables-apply ~/firewall/iptables.rules
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;openvpn-client&quot;&gt;OpenVPN client&lt;/h2&gt;
+
+&lt;p&gt;Depending on your OS, you will use different softwares. On some software, it is
+easier to use standalone config files (here they are &lt;code class=&quot;highlighter-rouge&quot;&gt;*.ovpn&lt;/code&gt; files to make it
+simpler).&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;MacOS: install Tunnelblick&lt;/li&gt;
+  &lt;li&gt;Linux: you can use openvpn with NetworkManager&lt;/li&gt;
+  &lt;li&gt;iOS and Android: OpenVPN Connect&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This part gives simple explanations about the whole process because with so much
+information above, it is difficult to have a clear idea of what you need to do.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-you-need&quot;&gt;What you need&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A laptop with openssl installed and a working folder that I will call &lt;code class=&quot;highlighter-rouge&quot;&gt;build&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;A client (possibly the same laptop, unless your client is a phone).&lt;/li&gt;
+  &lt;li&gt;An already configured server.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;steps-to-add-this-client&quot;&gt;Steps to add this client&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Provide the client laptop with your custom easy-rsa (this way the configuration is
+the same).&lt;/li&gt;
+  &lt;li&gt;On the client laptop
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#initialize-the-client-instance&quot;&gt;Create the request&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;Send the request to the CA&lt;/li&gt;
+      &lt;li&gt;Put the private key from &lt;code class=&quot;highlighter-rouge&quot;&gt;pki/private/_client_.key&lt;/code&gt; to your &lt;code class=&quot;highlighter-rouge&quot;&gt;build&lt;/code&gt; folder&lt;/li&gt;
+      &lt;li&gt;You can delete the client easy-rsa instance&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;On the CA
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#issue-certificates-for-the-client-and-the-server&quot;&gt;Sign the client request&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;Maybe encrypt the files before sending them. P.S. If you are using ssh for
+file transfers, no need to add the encryption layer&lt;/li&gt;
+      &lt;li&gt;Send the files to the client laptop&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;On the server
+    &lt;ul&gt;
+      &lt;li&gt;Send the two client config files to the client laptop&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;On the client laptop
+    &lt;ul&gt;
+      &lt;li&gt;Maybe decrypt the files from the CA&lt;/li&gt;
+      &lt;li&gt;Put every file in the &lt;code class=&quot;highlighter-rouge&quot;&gt;build&lt;/code&gt; folder. You should have:
+        &lt;ul&gt;
+          &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;client.conf&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;client.ovpn&lt;/code&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ca.crt&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;tls.key&lt;/code&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;_client_.key&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;_client_.crt&lt;/code&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Use the config file of your choice (depending on whether you want a standalone
+config file or not) and modify it by taking data in the other files. Here are
+examples. The Base64 data was directly taken in the files.&lt;/li&gt;
+      &lt;li&gt;Then you can just send the &lt;code class=&quot;highlighter-rouge&quot;&gt;client.ovpn&lt;/code&gt; file, or an archive containing the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;client.conf&lt;/code&gt; file with the four keys and certificates files, to the client.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;On the client
+    &lt;ul&gt;
+      &lt;li&gt;Enjoy!&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt; client.conf
+
+-tls-auth        tls.key 1
+&lt;span class=&quot;gd&quot;&gt;-ca              ca.crt
+-cert            client.crt
+-key             client.key
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+tls-auth        /path/to/tls.key 1
++ca              /path/to/ca.crt
++cert            /path/to/_client_.crt
++key             /path/to/_client_.key
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt; client.ovpn
+
+ ping-restart    30
+ 
+ key-direction   1
+ &amp;lt;tls-auth&amp;gt;
+ -----BEGIN OpenVPN Static key V1-----
+&lt;span class=&quot;gd&quot;&gt;-...
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+606aafbb7474cb29b5adb3436d7e5446
++4e33e66a57821dde9eb6843b1176d7dc
++75fcb94bd98dcd4234528ac2e318c504
++b51afc163b146b42b320bb9bce39f27c
++4bb1bd802e154aa58288256c6ac60a67
++1f3e0                      02b56
++8e75a                      994c8
++2c03a    Taken from the    1b29a
++ef79c    `tls.key' file    13226
++43a95                      b14fd
++aa25f                      be3ea
++82db6043752aef6a3de678ee3e128aa5
++b46838f307a13b0d1c7f729d34ba3197
++815a5670b434abde50c6958641480649
++8ff8de6929aa4ae021b8f7637957cf5d
++f4941e62b8502647aa00f050ea83f26c
+&lt;/span&gt; -----END OpenVPN Static key V1-----
+ &amp;lt;/tls-auth&amp;gt;
+ &amp;lt;ca&amp;gt;
+ -----BEGIN CERTIFICATE-----
+&lt;span class=&quot;gd&quot;&gt;-...
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+MIIDNTCCAh2gAwIBAgIJAJs+aLUfaW2iMA0GCSqGSIb3DQEBCwUAMBYxFDASBgNV
++BAMMC2V4YW1wbGUuY29tMB4XDTE3MTIwODEzNDUyOFoXDTI3MTIwNjEzNDUyOFow
++FjEUMBIGA1UEAwwLZXhhbXBsZS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
++ggEKAoIBAQCib40mJ1L1R27v6pWVRpN1mk2fgZ0ijN8+GXbAcB71czjsWXxIZq2t
++f9nT/MQ+N1cbXCjjV/8eq25SjcHvHhoPns+QrTLryN/b8ujU7IAozW4IJ19cYnnv
++E735VxZtB/Ne9gLbf2C/74E3kZG8OpK1+RJ6idK4Gz4GQBCBytFqdQKT9s/sYyPA
++vsc+VEzXLOS09TyTzx1XGjjeamTm3mGlOHRIDxYa+r9SaLfLWv/TJhRAzgQNMyiC
++JWeRu                                                      yzIHE
++NoB/U           Taken from the `ca.crt' file.              EFBlm
++gBKuj                                                      C/yWH
++5k/roRqkGDAWMRQwEgYDVQQDDAtleGFtcGxlLmNvbYIJAJs+aLUfaW2iMAwGA1Ud
++EwQFMAMBAf8wCwYDVR0PBAQDAgEGMA0GCSqGSIb3DQEBCwUAA4IBAQB5+uEAoFhW
++FGQmP/sbB6fOHNfhK3sYmzOjkQGn3pdsyQ1MvwcL0qCyH+iWbmjxCWlWJRC0WkP3
++W0T9oOeKGuDCTLzjuyZ4M/d4IcFCdOliY517eVCaeE5/uYFEaBseJjDqfEPqDKhr
++XETj/hcZxXf6DcveyYE3dtJ7NEsTyfXaKCJTvgPOiIE0pZ2rjJMcO2d0+DNqpk3M
++lp8oMPiq9HxjdvFM45oupY3nbQEM70p0NkOxGnrMesC0Hl++H0pmpn4OJM1GNdEf
++mi9DRkWOfYbyWhmDivEbsAHxv+i9xsC5ia/NY5/uKWB9klDTfl0Sp+XdnDUduuFz
++HboGYhuJxNQJ
+&lt;/span&gt; -----END CERTIFICATE-----
+ &amp;lt;/ca&amp;gt;
+ &amp;lt;cert&amp;gt;
+ -----BEGIN CERTIFICATE-----
+&lt;span class=&quot;gd&quot;&gt;-...
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+MIIDVTCCAj2gAwIBAgIQGLag/LPVbrqgd3eGx1drMDANBgkqhkiG9w0BAQsFADAW
++MRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xNzEyMDgxMzU1MjhaFw0yNzEyMDYx
++MzU1MjhaMB0xGzAZBgNVBAMMEmxhcHRvcC5leGFtcGxlLmNvbTCCASIwDQYJKoZI
++hvcNAQEBBQADggEPADCCAQoCggEBALoBFuGdPD70L2vNGX2gE9EQ8gIwmCCF5Qll
++eJ4zShCpc77vnoPCFDYYUfR0re9nMceLnUBhDIGqq6EDWtHulnZuKuTF2VS9DoaR
++wbN/ttA9xfAsOgxycwk2pvKQtoi1vtYfZmBIuHu+8aBezUoHpcFZ8DZ7d6kPGNeY
++91SfJQHR9rMIMvHRz+3wBtyTiS2OqHWCTYEzpB7BsCejmZmgFduVcFh6HGx22Mv/
++jM4Gd                                                      uX3Yr
++kSNEq        Taken from the `_client_.crt' file.           BlzCB
++lDAJB                                                      GBgNV
++HSMEPzA9gBQZZoASro2Exk0prCyvAv8lh+ZP66EapBgwFjEUMBIGA1UEAwwLZXhh
++bXBsZS5jb22CCQCbPmi1H2ltojATBgNVHSUEDDAKBggrBgEFBQcDAjALBgNVHQ8E
++BAMCB4AwDQYJKoZIhvcNAQELBQADggEBABvBBoW17VJxXZmsV+PI1V5f9OWHcdrR
++ixIY4JoWGkzobn9Li+zlgvVPWjguL/VTXPX+J6aHcLW4w/hRsyDEYU9wNHjCNnFB
++CrYthURSVVC9ojUJ0KoUyTMomIQWCLpsv/Oa5rEcwYmjj9viLFN3FvyN7G6Z7jen
++DivtjNcf5cdy0k8uEYBarnf7OApP4XQSbE5Z+2YLyiGSMy5wxFCFeXH16/RcJp++
++PBE5ctCZqonO4wfGIs6PnnFK8kvyzeyr13bFVbZaMz0BmpOzNdMczl9SDyQw5FFf
++MvPE0YZQneJgJFXJKYu0NsyOsokyIXcUAsbzPenadKbP4X5OWdDQNt4=
+&lt;/span&gt; -----END CERTIFICATE-----
+ &amp;lt;/cert&amp;gt;
+ &amp;lt;key&amp;gt;
+ -----BEGIN PRIVATE KEY-----
+&lt;span class=&quot;gd&quot;&gt;-...
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC6ARbhnTw+9C9r
++zRl9oBPREPICMJggheUJZXieM0oQqXO+756DwhQ2GFH0dK3vZzHHi51AYQyBqquh
++A1rR7pZ2birkxdlUvQ6GkcGzf7bQPcXwLDoMcnMJNqbykLaItb7WH2ZgSLh7vvGg
++Xs1KB6XBWfA2e3epDxjXmPdUnyUB0fazCDLx0c/t8Abck4ktjqh1gk2BM6QewbAn
++o5mZoBXblXBYehxsdtjL/4zOBncCButs24pjRaAfQ4v0RKP/niFpQm+FPcE4lZb/
++EBkOwIF82UJxMJFhrl92K5EjRKk+Zm+WEatzfdI9xLc0VUz3T+LoNS7vsS1/1zPr
++6Rh7XrF9AgMBAAECggEAC8C33med/+hT+r7J5osv1Vz5vbOuWRe8whw8Q9q/yk+6
++tYzUekTQHB7rRsP8nYzqs04aEJBRRvwuvgzFN1CZB0CsyynJMraDbXNWRu5B8eSF
++VkilHlY4+JMQd3E3Z2n8dfEj+d9+cKs+/0AePpg/G/l/2SFyDSecDTtoHVu07eln
++pAU+W4WO0Dvx6hup5LOND3koBNTvYBeEk4GrB0W2Wr3lQV8X47zIOxVhFPfombDx
++6OuqOJPqZ0hfOa9vJJLNI0vzR79vSItJ95nFKE3yPawlUlGB8o42NQV+djtkJxxd
++2YLvZ                                                      iXF99
++4LPXC        Taken from the `_client_.key' file.           CNxoA
++3DMt8                                                      45/jv
++DuhmWd8y53yt/zIfaSCTIMa5ZQKBgQDBm4kAhqryw+BbIbSRzLwLxmK7qCrENHlC
++/Vp5qzo1PXw2AoNlQN4TbvQ3xWQZ4kdkJtUr0vDK6K4VR8o1GMm9fqNsdDTc2f1x
++q/a1s/iXVwDV6OFgyKcbPL5pAt+3vXVn79ZFknaxXEulWypOUdwosxhXXUXjZnwY
++KvE9OIAiOQKBgHH51UOGH23qyJio3Cv2jQETzghYgXwwDVK7k6/MIDzvIYvkdKxm
++IWJMxcZt72htU7rxgu2f0X+BL754UJmjcihRHXmFXn26vvv8OojEsn1DdJWfGae7
++np+p9QfqB00svpYbbA6L4j9glzNKdSc77mE4NuJdOn9b6zt5OXpVTyKtAoGAOk83
++sdrdPYRU292I3qiEsh8ruUzqpHERXGWljCNPwp0j/bhADoy81amDEBD5FvqZecZg
++SXScZOAzHeGjOt6eU94CJjXRffqBZGzgPtVXN21SqRocVuPXwFJJHqNo8ZOz+nu3
++UvjLmpsrhT+xvCjXX8KgwB8tX1GMalL0mPWdUbECgYEAmr6lsqd5UWlBzk3O/6Nf
++s90C9wKcDLyMjktu5fAk0pP/rZgfLcSc5pH1xIg/+ufktZqiOwDhm28Une4VDyuv
++q3po3yneF4CHVtNsg3J89xXTaCzyygCIRsqSmVwbGlDRSDftPytnB8vteMqrbPAk
++WOmXfzRj2ZsFLnldASN2jA8=
+&lt;/span&gt; -----END PRIVATE KEY-----
+ &amp;lt;/key&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Fri, 03 Nov 2017 00:00:00 +0100</pubDate>
+        <link>https://www.neze.fr/2017/vps-config/</link>
+        <guid isPermaLink="true">https://www.neze.fr/2017/vps-config/</guid>
+        
+        
+        <category>computer-science</category>
+        
+        <category>notes</category>
+        
+      </item>
+    
+      <item>
+        <title>Télécom ParisTech access</title>
+        <description>&lt;p&gt;&lt;em&gt;Access to the Télécom ParisTech network.&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;notations&quot;&gt;Notations&lt;/h1&gt;
+
+&lt;p&gt;I will use &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;username&amp;gt;&lt;/code&gt; to denote the LDAP username, and &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;password&amp;gt;&lt;/code&gt; the corresponding password.&lt;/p&gt;
+
+&lt;p&gt;In my case, then I have the following:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt; username=&quot;cdurand&quot;
+ password=&quot;¿?¿?¿?¿?&quot;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;ssh-access&quot;&gt;SSH Access&lt;/h1&gt;
+
+&lt;h2 id=&quot;out-of-the-box-access&quot;&gt;Out-of-the-box access&lt;/h2&gt;
+
+&lt;p&gt;You can use &lt;a href=&quot;https://gist.github.com/w2ak/cf307845e554ac713723dbe125f58bdd&quot;&gt;this script&lt;/a&gt; to access shells from Télécom ParisTech machines.&lt;/p&gt;
+
+&lt;p&gt;The code is not perfect and could be improved, &lt;strong&gt;dont hesitate to write comments on the github page if you have suggestions&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Please note that basic help is available by executing &lt;code class=&quot;highlighter-rouge&quot;&gt;./ssh.sh -h&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;shell-access&quot;&gt;Shell access&lt;/h2&gt;
+
+&lt;p&gt;Simple shell access can be performed through &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh.enst.fr&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt; neze@yoga ~ $ ssh &amp;lt;username&amp;gt;@ssh.enst.fr
+ &amp;lt;username&amp;gt;@ssh.enst.fr's password:
+ ssh1%&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;You will end up randomly on &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh1&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh2&lt;/code&gt; (with your same old home folder whatever the machine).&lt;/p&gt;
+
+&lt;h2 id=&quot;access-to-a-computer&quot;&gt;Access to a computer&lt;/h2&gt;
+
+&lt;p&gt;You can access any computer in a lab, provided it is switched on. The examples will be made with &lt;code class=&quot;highlighter-rouge&quot;&gt;c129-21&lt;/code&gt;, i.e., computer 21 from room 129 in the C building.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt; neze@yoga ~ $ ssh &amp;lt;username&amp;gt;@ssh.enst.fr
+ &amp;lt;username&amp;gt;@ssh.enst.fr's password:
+ ssh1% ssh c129-21
+ &amp;lt;username&amp;gt;@c129-21's password:
+ c129-21%&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;direct-access&quot;&gt;Direct access&lt;/h2&gt;
+
+&lt;p&gt;To avoid having to call every ssh command, and easily add new rooms to your configuration, you can edit your &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh&lt;/code&gt; config file (generally found in &lt;code class=&quot;highlighter-rouge&quot;&gt;~/.ssh/config&lt;/code&gt;).&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt; neze@yoga ~ $ mkdir -p ~/.ssh
+ neze@yoga ~ $ $EDITOR ~/.ssh/config&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;details&gt;&lt;summary&gt;Code&lt;/summary&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-diff&quot; data-lang=&quot;diff&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;gi&quot;&gt;+Host enst room
++  User &amp;lt;username&amp;gt;
++
++Host enst
++  HostName ssh.enst.fr
++
++Host room
++  HostName c129-21.enst.fr
++  ProxyCommand ssh -W %h:%p enst&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;/details&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt; neze@yoga ~ $ ssh room
+ &amp;lt;username&amp;gt;@enst's password:
+ &amp;lt;username&amp;gt;@room's password:
+ c129-21%&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;using-a-key&quot;&gt;Using a key&lt;/h2&gt;
+
+&lt;p&gt;Using a key avoids having to type the password every time and is more secure.&lt;/p&gt;
+
+&lt;p&gt;You can (if you don’t already have one) generate a key. &lt;strong&gt;&lt;em&gt;If you do not trust
+your computer’s safety or if you intend to use this key for critical accesses,
+please make sure not to use an empty passphrase.&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;details&gt;&lt;summary&gt;Code&lt;/summary&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt; neze@yoga ~ $ ssh-keygen -t ecdsa -b 521
+ Generating public/private ecdsa key pair.
+ Enter file in which to save the key (~/.ssh/id_ecdsa):
+ Enter passphrase (empty for no passphrase):
+ Enter same passphrase again:
+ Your identification has been saved in ~/.ssh/id_ecdsa.
+ Your public key has been saved in ~/.ssh/id_ecdsa.pub.
+ The key fingerprint is:
+ SHA256:RFvkT4zJm42yqK8Y5Ju2Pkk4napTH8NgnGK/DW6flO8 neze@neze-yoga
+ The key's randomart image is:
+ +---[ECDSA 521]---+
+ |        ..o      |
+ |       . = +     |
+ | . .    o = o    |
+ |..=    .   B     |
+ |.=o+    S + o    |
+ |oo=o+ .. o       |
+ | =+o+=. .        |
+ |o +Oooo          |
+ |o+Bo+=oE         |
+ +----[SHA256]-----+&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;/details&gt;
+
+&lt;p&gt;Then you have to copy the &lt;strong&gt;public&lt;/strong&gt; key to Télécom. Do not copy this file manually, use &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh-copy-id&lt;/code&gt; as below.&lt;/p&gt;
+
+&lt;details&gt;&lt;summary&gt;Code&lt;/summary&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt; neze@yoga ~ $ ssh-copy-id -i ~/.ssh/id_ecdsa.pub enst
+ /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: &quot;~/.ssh/id_ecdsa.pub&quot;
+ /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+ /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+ 
+ &amp;lt;username&amp;gt;@enst's password:
+ 
+ Number of key(s) added: 1
+ 
+ Now try logging into the machine, with:   &quot;ssh 'enst'&quot;
+ and check to make sure that only the key(s) you wanted were added.&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;/details&gt;
+
+&lt;p&gt;Finally, make sure that your ssh config file always use the right key by modifying &lt;code class=&quot;highlighter-rouge&quot;&gt;~/.ssh/config&lt;/code&gt; as follows.&lt;/p&gt;
+
+&lt;details&gt;&lt;summary&gt;Code&lt;/summary&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-diff&quot; data-lang=&quot;diff&quot;&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt; Host enst room
+   User &amp;lt;username&amp;gt;
+&lt;span class=&quot;gi&quot;&gt;+  IdentityFile ~/.ssh/id_ecdsa
+&lt;/span&gt; 
+ Host enst
+   HostName ssh.enst.fr
+ 
+ Host room
+   HostName c129-21.enst.fr
+   ProxyCommand ssh -W %h:%p enst
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;/details&gt;
+
+&lt;p&gt;Now, connection to &lt;code class=&quot;highlighter-rouge&quot;&gt;room&lt;/code&gt; should be rather direct.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt; neze@yoga ~ $ ssh room
+ c129-21%&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;accessing-graphical-interfaces&quot;&gt;Accessing graphical interfaces&lt;/h2&gt;
+
+&lt;p&gt;Graphical interfaces access can be tricky when you have to go through an
+intermediate server (here, &lt;code class=&quot;highlighter-rouge&quot;&gt;enst&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh.enst.fr&lt;/code&gt;). The configuration file
+however allows you to do this pretty easily. Now that you configured everything
+you can easily access graphical interfaces of &lt;code class=&quot;highlighter-rouge&quot;&gt;room&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt; neze@yoga ~ $ ssh -X room
+ c129-21% eclipse          # or chromium, for example&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;tunnelling&quot;&gt;Tunnelling&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://pix.toile-libre.org/upload/original/1509094362.png&quot; alt=&quot;ieee&quot; style=&quot;float:left;margin:0 10px 0 0&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;A basic use-case of tunnels is getting access to scientific paper websites like IEEE.&lt;/p&gt;
+
+&lt;p&gt;Assuming that you configured your ssh client, you should be able to open a socks proxy:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt; neze@yoga ~ $ ssh -ND 8080 room&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Do not close this terminal, then configure your web browser to use the SOCKS5 proxy
+&lt;code class=&quot;highlighter-rouge&quot;&gt;127.0.0.1:8080&lt;/code&gt;. On firefox, this is found in the &lt;code class=&quot;highlighter-rouge&quot;&gt;Preferences&lt;/code&gt; page, &lt;code class=&quot;highlighter-rouge&quot;&gt;Advanced&lt;/code&gt;
+section, under the &lt;code class=&quot;highlighter-rouge&quot;&gt;Network&lt;/code&gt; tab. There is a &lt;code class=&quot;highlighter-rouge&quot;&gt;Settings&lt;/code&gt; button to setup &lt;em&gt;how Firefox
+connects to the Internet&lt;/em&gt;, and it includes a proxy configuration.&lt;/p&gt;
+
+&lt;p&gt;More information about SSH connections and tunnels can be found in
+&lt;a href=&quot;/2017/ssh-connexions-and-tunnels/&quot;&gt;this article&lt;/a&gt; or on the web.&lt;/p&gt;
+</description>
+        <pubDate>Fri, 29 Sep 2017 00:00:00 +0200</pubDate>
+        <link>https://www.neze.fr/2017/telecom-access/</link>
+        <guid isPermaLink="true">https://www.neze.fr/2017/telecom-access/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Traffic shaping tricks</title>
+        <description>&lt;p&gt;&lt;em&gt;This is how I limited my dad’s bandwidth on my server :°&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Assume you want to limit the bandwidth on your vpn for only specific clients by ip.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;NETCARD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;tun0
+&lt;span class=&quot;nv&quot;&gt;MAXBANDWIDTH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;8192 &lt;span class=&quot;c&quot;&gt;# kiB/s, i.e. 8MiB/s&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# reinit&lt;/span&gt;
+tc qdisc del dev &lt;span class=&quot;nv&quot;&gt;$NETCARD&lt;/span&gt; root handle 1
+tc qdisc add dev &lt;span class=&quot;nv&quot;&gt;$NETCARD&lt;/span&gt; root handle 1: htb default 9999
+
+&lt;span class=&quot;c&quot;&gt;# create default class&lt;/span&gt;
+tc class add dev &lt;span class=&quot;nv&quot;&gt;$NETCARD&lt;/span&gt; parent 1:0 classid 1:9999 htb rate &lt;span class=&quot;k&quot;&gt;$((&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$MAXBANDWIDTH&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;))&lt;/span&gt;kbps ceil &lt;span class=&quot;k&quot;&gt;$((&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$MAXBANDWIDTH&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;))&lt;/span&gt;kbps burst 5k prio 9999
+
+&lt;span class=&quot;c&quot;&gt;# control bandwidth per IP&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;declare&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; ipctrl
+ipctrl[10.42.0.4]&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;128&quot;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# kB/s&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;mark&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+&lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;ip &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;!ipctrl[@]&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;do
+    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;mark&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$((&lt;/span&gt; mark &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;bandwidth&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;ipctrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$ip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# traffic shaping rule&lt;/span&gt;
+    tc class add dev &lt;span class=&quot;nv&quot;&gt;$NETCARD&lt;/span&gt; parent 1:0 classid 1:&lt;span class=&quot;nv&quot;&gt;$mark&lt;/span&gt; htb rate &lt;span class=&quot;k&quot;&gt;$((&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$bandwidth&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;))&lt;/span&gt;kbps ceil &lt;span class=&quot;k&quot;&gt;$((&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$bandwidth&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;))&lt;/span&gt;kbps burst 5k prio &lt;span class=&quot;nv&quot;&gt;$mark&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# netfilter packet marking rule&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;#iptables -t mangle -A INPUT -i $NETCARD -s $ip -j CONNMARK --set-mark $mark&lt;/span&gt;
+    iptables &lt;span class=&quot;nt&quot;&gt;-I&lt;/span&gt; FORWARD &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$NETCARD&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ip&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; CONNMARK &lt;span class=&quot;nt&quot;&gt;--set-mark&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$mark&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# filter that bind the two&lt;/span&gt;
+    tc filter add dev &lt;span class=&quot;nv&quot;&gt;$NETCARD&lt;/span&gt; parent 1:0 protocol ip prio &lt;span class=&quot;nv&quot;&gt;$mark&lt;/span&gt; handle &lt;span class=&quot;nv&quot;&gt;$mark&lt;/span&gt; fw flowid 1:&lt;span class=&quot;nv&quot;&gt;$mark&lt;/span&gt;
+
+    &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;IP &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$ip&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; is attached to mark &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$mark&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; and limited to &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$bandwidth&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; kbps&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# propagate netfilter marks on connections&lt;/span&gt;
+iptables &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; mangle &lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; POSTROUTING &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; CONNMARK &lt;span class=&quot;nt&quot;&gt;--restore-mark&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+        <pubDate>Fri, 23 Jun 2017 00:00:00 +0200</pubDate>
+        <link>https://www.neze.fr/2017/traffic-shaping/</link>
+        <guid isPermaLink="true">https://www.neze.fr/2017/traffic-shaping/</guid>
+        
+        <category>howto</category>
+        
+        <category>network</category>
+        
+        <category>shell</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Linux networking</title>
+        <description>&lt;p&gt;&lt;em&gt;A few notes about interfaces manipulations, general networking, etc.&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;interfaces-manipulations&quot;&gt;Interfaces manipulations&lt;/h1&gt;
+
+&lt;h2 id=&quot;setting-up-a-bridge&quot;&gt;Setting up a bridge&lt;/h2&gt;
+
+&lt;p&gt;Assume you have two interfaces &lt;code class=&quot;highlighter-rouge&quot;&gt;eth0&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;eth1&lt;/code&gt; and you want to put them on the same link.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# With ip link&lt;/span&gt;
+
+ip &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;add name br0 &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;bridge
+ip &lt;span class=&quot;nb&quot;&gt;link set &lt;/span&gt;br0 up
+ip &lt;span class=&quot;nb&quot;&gt;link set &lt;/span&gt;eth0 up
+ip &lt;span class=&quot;nb&quot;&gt;link set &lt;/span&gt;eth0 master br0
+ip &lt;span class=&quot;nb&quot;&gt;link set &lt;/span&gt;eth1 up
+ip &lt;span class=&quot;nb&quot;&gt;link set &lt;/span&gt;eth1 master br0
+
+ip &lt;span class=&quot;nb&quot;&gt;link set &lt;/span&gt;eth1 nomaster
+ip &lt;span class=&quot;nb&quot;&gt;link set &lt;/span&gt;eth1 down
+ip &lt;span class=&quot;nb&quot;&gt;link set &lt;/span&gt;eth0 nomaster
+ip &lt;span class=&quot;nb&quot;&gt;link set &lt;/span&gt;eth0 down
+ip &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;delete br0 &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;bridge
+
+&lt;span class=&quot;c&quot;&gt;# With brctl from bridge-utils&lt;/span&gt;
+
+brctl addbr br0
+brctl addif br0 eth0
+brctl addif br0 eth1
+ip &lt;span class=&quot;nb&quot;&gt;link set &lt;/span&gt;br0 up
+
+ip &lt;span class=&quot;nb&quot;&gt;link set &lt;/span&gt;br0 down
+brctl delbr br0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;simple-servers-and-clients&quot;&gt;Simple servers and clients&lt;/h1&gt;
+
+&lt;h2 id=&quot;using-socat&quot;&gt;Using socat&lt;/h2&gt;
+
+&lt;p&gt;Echo server listening on one port and answering exactly what it receives.
+The &lt;code class=&quot;highlighter-rouge&quot;&gt;fork&lt;/code&gt; instruction allows it to fork and accept multiple connections.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;socat TCP4-LISTEN:&lt;span class=&quot;nv&quot;&gt;$PORT&lt;/span&gt;,fork EXEC:&lt;span class=&quot;s1&quot;&gt;'/bin/cat'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;network-file-systems&quot;&gt;Network file systems&lt;/h1&gt;
+
+&lt;h2 id=&quot;ssh-filesystem&quot;&gt;SSH filesystem&lt;/h2&gt;
+
+&lt;p&gt;How to locally mount a remote folder.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sshfs &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;IdentityFile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$ID&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$SSH_DIR&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;volname&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$VOLUME&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; auto_cache,reconnect,defer_permissions,noappledouble,nolocalcaches,no_readahead &lt;span class=&quot;nv&quot;&gt;$MOUNT_DIR&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+        <pubDate>Tue, 11 Apr 2017 00:00:00 +0200</pubDate>
+        <link>https://www.neze.fr/2017/linux-networking/</link>
+        <guid isPermaLink="true">https://www.neze.fr/2017/linux-networking/</guid>
+        
+        <category>howto</category>
+        
+        <category>network</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Notes about python</title>
+        <description>&lt;p&gt;&lt;em&gt;Random notes taken about python, style and my habits.&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;time-saving&quot;&gt;Time saving&lt;/h1&gt;
+
+&lt;h2 id=&quot;one-liners&quot;&gt;One-liners&lt;/h2&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+if x:
+    return y
+else:
+    return z
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; creating a n*m null matrix
+M=list()
+for i in range(n):
+    l=list()
+    for j in range(m):
+        l.append(0)
+    M.append(l)
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; copying a vector
+u = [0]*len(U)
+for i in range(len(U)):
+    u[i]=U[i]
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;U&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; sum of two vectors
+u = [0]*len(a)
+for i in range(len(a)):
+    u[i]=a[i]+b[i]
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# bonus :P
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;zip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;common-mistakes&quot;&gt;Common mistakes&lt;/h1&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; creating 0 matrix
+M = [[0]*n]*m
+M[0][0]=1
+print(M[1][0]) # will print 1 because
+               # every M[i] is the same
+               # list [0]*n
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;style&quot;&gt;Style&lt;/h1&gt;
+
+&lt;p&gt;avoid abusive casts. if you want to check the type while debugging, use prints, etc.&lt;/p&gt;
+
+&lt;h1 id=&quot;debugging-and-cross-debugging&quot;&gt;Debugging and cross debugging&lt;/h1&gt;
+
+&lt;h1 id=&quot;optimization&quot;&gt;Optimization&lt;/h1&gt;
+
+&lt;h2 id=&quot;booleans&quot;&gt;Booleans&lt;/h2&gt;
+
+&lt;p&gt;To evaluate a boolean, python first casts it to an int (0 or 1) and then
+checks that it is not 0. It is then better to evaluate integers than
+booleans, generally.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; bad version
+if n!=0:
+    # python evaluates n!=0 to True or False, then
+    # converts the boolean to 1 or 0, and finally
+    # checks if the result is non-zero
+    print(&quot;ok&quot;)
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;ok&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+        <pubDate>Mon, 13 Mar 2017 00:00:00 +0100</pubDate>
+        <link>https://www.neze.fr/2017/notes-about-python/</link>
+        <guid isPermaLink="true">https://www.neze.fr/2017/notes-about-python/</guid>
+        
+        <category>python</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Notes about encrypted storage</title>
+        <description>&lt;p&gt;&lt;em&gt;Notes from the last time I had to create and use an encrypted usb key.&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;You need to get the name of your device, and of the partition you will create.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;dev&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;sdc
+&lt;span class=&quot;nv&quot;&gt;part&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;sdc1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;creating-a-cryptodevice&quot;&gt;Creating a cryptodevice&lt;/h1&gt;
+
+&lt;h2 id=&quot;create-a-partition-on-the-device&quot;&gt;Create a partition on the device&lt;/h2&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;fdisk /dev/&lt;span class=&quot;nv&quot;&gt;$dev&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;format-the-partition-as-luks-encrypted-fs&quot;&gt;Format the partition as LUKS encrypted fs&lt;/h2&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cryptsetup luksFormat /dev/&lt;span class=&quot;nv&quot;&gt;$part&lt;/span&gt;           &lt;span class=&quot;c&quot;&gt;# will prompt for a passphrase&lt;/span&gt;
+cryptsetup luksFormat /dev/&lt;span class=&quot;nv&quot;&gt;$part&lt;/span&gt; &amp;lt;keyfile&amp;gt; &lt;span class=&quot;c&quot;&gt;# will use the key file to encrypt&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;open-the-partition&quot;&gt;Open the partition&lt;/h2&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cryptsetup luksOpen /dev/&lt;span class=&quot;nv&quot;&gt;$part&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$part&lt;/span&gt;
+cryptsetup luksOpen /dev/&lt;span class=&quot;nv&quot;&gt;$part&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$part&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--key-file&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;lt;keyfile&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This creates a virtual partition in &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/mapper/$part&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;create-a-filesystem-in-the-partition&quot;&gt;Create a filesystem in the partition&lt;/h2&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mkfs.ext4 /dev/mapper/&lt;span class=&quot;nv&quot;&gt;$part&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;mount-the-partition&quot;&gt;Mount the partition&lt;/h2&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; /mnt/usb &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; mount /dev/mapper/&lt;span class=&quot;nv&quot;&gt;$part&lt;/span&gt; /mnt/usb
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You can now use &lt;code class=&quot;highlighter-rouge&quot;&gt;/mnt/usb&lt;/code&gt; as a normal storage device. It will be encrypted on the fly.&lt;/p&gt;
+
+&lt;h1 id=&quot;opening-a-cryptodevice&quot;&gt;Opening a cryptodevice&lt;/h1&gt;
+
+&lt;p&gt;Using the last steps of the device creation, the opening becomes :&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cryptsetub luksOpen /dev/&lt;span class=&quot;nv&quot;&gt;$part&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$part&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; /mnt/usb &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; mount /dev/mapper/&lt;span class=&quot;nv&quot;&gt;$part&lt;/span&gt; /mnt/usb
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;closing-a-cryptodevice&quot;&gt;Closing a cryptodevice&lt;/h1&gt;
+
+&lt;p&gt;To eject your device properly, the cleanest way is to do everything step by step :&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;umount /mnt/usb
+cryptsetup luksClose /dev/mapper/&lt;span class=&quot;nv&quot;&gt;$part&lt;/span&gt;
+eject /dev/&lt;span class=&quot;nv&quot;&gt;$dev&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+        <pubDate>Sat, 04 Feb 2017 00:00:00 +0100</pubDate>
+        <link>https://www.neze.fr/2017/cryptodevice/</link>
+        <guid isPermaLink="true">https://www.neze.fr/2017/cryptodevice/</guid>
+        
+        <category>howto</category>
+        
+        <category>cryptography</category>
+        
+        
+      </item>
+    
+  </channel>
+</rss>

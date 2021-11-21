@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+
+  <title>Linux, Touchscreen and Trouble</title>
+  <meta name="description" content="Solutions to several problems I had with linux on a touchscreen-equiped laptop.
+">
+  <meta name="author" content="Clément Durand">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Linux, Touchscreen and Trouble">
+  <meta name="twitter:description" content="Solutions to several problems I had with linux on a touchscreen-equiped laptop.
+">
+  
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Linux, Touchscreen and Trouble">
+  <meta property="og:description" content="Solutions to several problems I had with linux on a touchscreen-equiped laptop.
+">
+
+  <link rel="shortcut icon" href="/images/favicons/favicon.ico">
+  <meta name="msapplication-TileColor" content="#ffc40d">
+  <meta name="msapplication-TileImage" content="/images/favicons/mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://www.neze.fr/2020/linux-touchscreen-and-trouble/">
+  <link rel="alternate" type="application/rss+xml" title="Hello there!" href="/feed.xml">
+</head>
+
+
+  <body>
+    <span class="mobile btn-mobile-menu">
+  <i class="fas fa-bars btn-mobile-menu__icon"></i>
+  <!--<i class="far fa-times-circle btn-mobile-close__icon hidden"></i>-->
+</span>
+
+<header class="panel-cover" style="background-image: url(/images/cover.jpg)">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="link to home of Hello there!">
+          <img src="/images/profile.png" class="user-image" alt="My Profile Photo">
+          <h1 class="panel-cover__title panel-title">Hello there!</h1>
+        </a>
+        <hr class="panel-cover__divider">
+        <p class="panel-cover__description">My front to the Worst Wild Web</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary">
+
+        <div class="navigation-wrapper">
+          <nav class="cover-navigation">
+            <ul class="navigation">
+              <li class="navigation__item">
+                <a href="/#blog" title="link to Hello there! blog" class="blog-button">Blog</a>
+              </li>
+            </ul>
+          </nav>
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+              
+              <!-- Keybase -->
+              <li class="navigation__item">
+                <a href="https://keybase.io/neze" title="Keybase" target="_blank">
+                  <i class="fab fa-keybase"></i>
+                  <span class="label">Keybase</span>
+                </a>
+              </li>
+              
+              
+              <!-- PGP Key -->
+              <li class="navigation__item">
+                <a href="https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=index&search=0xef2d00c6caa88d40" title="PGP" target="_blank">
+                  <i class="fas fa-fingerprint"></i>
+                  <span class="label">PGP</span>
+                </a>
+              </li>
+              
+              
+              <!-- Email -->
+              <li class="navigation__item">
+                <a href="mailto:clement@neze.fr" title="Email" target="_blank">
+                  <i class="fas fa-envelope"></i>
+                  <span class="label">Email</span>
+                </a>
+              </li>
+              
+              
+              <!-- RSS -->
+              <li class="navigation__item">
+                <a href="/feed.xml" title="Subscribe" target="_blank">
+                  <i class="fas fa-rss"></i>
+                  <span class="label">RSS</span>
+                </a>
+              </li>
+              
+            </ul>
+          </nav>
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+              
+              <!-- Mastodon -->
+              <li class="navigation__item">
+                <a href="https://framapiaf.org/@neze" title="Mastodon" target="_blank">
+                  <i class="fab fa-mastodon"></i>
+                  <span class="label">Mastodon</span>
+                </a>
+              </li>
+              
+              
+              <!-- Twitter -->
+              <li class="navigation__item">
+                <a href="https://twitter.com/neze_drd" title="Twitter" target="_blank">
+                  <i class="fab fa-twitter"></i>
+                  <span class="label">Twitter</span>
+                </a>
+              </li>
+              
+              
+              <!-- Reddit -->
+              <li class="navigation__item">
+                <a href="https://www.reddit.com/user/neze_drd" title="Reddit" target="_blank">
+                  <i class="fab fa-reddit-alien"></i>
+                  <span class="label">Reddit</span>
+                </a>
+              </li>
+              
+              
+              <!-- Facebook -->
+              <li class="navigation__item">
+                <a href="https://www.facebook.com/SaXw2aK" title="Facebook" target="_blank">
+                  <i class="fab fa-facebook-f"></i>
+                  <span class="label">Facebook</span>
+                </a>
+              </li>
+              
+              
+              <!-- Instagram -->
+              <li class="navigation__item">
+                <a href="https://www.instagram.com/neze_drd" title="Instagram" target="_blank">
+                  <i class="fab fa-instagram"></i>
+                  <span class="label">Instagram</span>
+                </a>
+              </li>
+              
+              
+              <!-- Snapchat -->
+              <li class="navigation__item">
+                <a href="https://www.snapchat.com/add/neze_drd" title="Snapchat" target="_blank">
+                  <i class="fab fa-snapchat-ghost"></i>
+                  <span class="label">Snapchat</span>
+                </a>
+              </li>
+              
+              
+              
+              <!-- LinkedIn -->
+              <li class="navigation__item">
+                <a href="https://www.linkedin.com/in/clement-durand" title="LinkedIn" target="_blank">
+                  <i class="fab fa-linkedin-in"></i>
+                  <span class="label">LinkedIn</span>
+                </a>
+              </li>
+              
+              
+              <!-- Omg.lol -->
+              <li class="navigation__item">
+                <a href="https://neze.omg.lol/" title="Omg.lol" target="_blank">
+                  <i class="far fa-grin-squint-tears"></i>
+                  <span class="label">Omg.lol</span>
+                </a>
+              </li>
+              
+              
+              <!-- Git -->
+              <li class="navigation__item">
+                <a href="https://framagit.org/neze" title="Git" target="_blank">
+                  <i class="fab fa-git-alt"></i>
+                  <span class="label">Git</span>
+                </a>
+              </li>
+              
+              
+              <!-- GitHub -->
+              <li class="navigation__item">
+                <a href="https://www.github.com/w2ak" title="GitHub" target="_blank">
+                  <i class="fab fa-github-alt"></i>
+                  <span class="label">GitHub</span>
+                </a>
+              </li>
+              
+              
+              <!-- Git -->
+              <li class="navigation__item">
+                <a href="https://www.gitlab.com/neze" title="GitLab" target="_blank">
+                  <i class="fab fa-gitlab"></i>
+                  <span class="label">GitLab</span>
+                </a>
+              </li>
+              
+            </ul>
+          </nav>
+        </div>
+
+    </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+      <div class="content-wrapper__inner">
+        <article class="post-container post-container--single">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2020-05-10 10:21" class="post-meta__date date">10 May 2020</time>
+      
+      &#8226; <span class="post-meta__tags">on <a href="/tags/#howto">howto</a></span>
+      
+    </div>
+    <h1 class="post-title">Linux, Touchscreen and Trouble</h1>
+  </header>
+
+  <section class="post">
+    <p><em>Solutions to several problems I had with linux on a touchscreen-equiped laptop.</em></p>
+
+<hr />
+
+<p>When installing linux on laptop, I started having a few problems with the
+touchscreen, especially when trying to rotate or extend the screen.</p>
+
+<h1 id="know-how-to-identify-your-devices">Know how to identify your devices</h1>
+
+<p>To manipulate input devices, I use <code class="highlighter-rouge">xinput</code>. To deal with displays, I use
+<code class="highlighter-rouge">xrandr</code> or the graphical interface. I need the identifiers of my devices
+in order to be able to interact with these.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xinput list <span class="nt">--long</span> | less
+</code></pre></div></div>
+
+<p>By examining the output of xinput, you can identify the device mentioning
+“touch” and get its id. In my case:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">TOUCHSCREEN</span><span class="o">=</span><span class="s1">'ATML1000:00 E206:5883'</span>
+</code></pre></div></div>
+
+<p>Xrandr can tell you how your monitors are named.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xrandr | less
+</code></pre></div></div>
+
+<p>In my case, I get:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">MAINSCREEN</span><span class="o">=</span><span class="s1">'eDP-1'</span>
+<span class="nb">export </span><span class="nv">HDMISCREEN</span><span class="o">=</span><span class="s1">'HDMI-1'</span>
+</code></pre></div></div>
+
+<h1 id="how-to-disable-the-touchscreen">How to disable the touchscreen</h1>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xinput <span class="nt">--enable</span> <span class="s2">"</span><span class="nv">$TOUCHSCREEN</span><span class="s2">"</span>
+xinput <span class="nt">--disable</span> <span class="s2">"</span><span class="nv">$TOUCHSCREEN</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<p>My setup is a simple script that flips the touchscreen on and off.</p>
+
+<details><summary>Code</summary>
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="c">#!/bin/sh</span>
+<span class="nv">TOUCHSCREEN</span><span class="o">=</span><span class="s1">'ATML1000:00 E206:5883'</span>
+
+<span class="k">if</span> <span class="o">[</span> <span class="o">!</span> <span class="nt">-t</span> 0 <span class="o">]</span><span class="p">;</span> <span class="k">then
+</span><span class="nv">SAYFILE</span><span class="o">=</span><span class="si">$(</span><span class="nb">mktemp</span><span class="si">)</span>
+<span class="nb">exec </span>3&gt;&amp;1 4&gt;&amp;2 <span class="o">&gt;</span><span class="nv">$SAYFILE</span> 2&gt;&amp;1
+say_cleanup <span class="o">()</span> <span class="o">{</span>
+  notify-send <span class="s2">"</span><span class="si">$(</span><span class="nb">cat</span> <span class="nv">$SAYFILE</span><span class="si">)</span><span class="s2">"</span>
+  <span class="nb">exec </span>1&gt;&amp;3 2&gt;&amp;4
+  <span class="nb">rm</span> <span class="nv">$SAYFILE</span>
+<span class="o">}</span>
+<span class="nb">trap </span>say_cleanup EXIT
+<span class="k">fi
+
+</span>is_enabled <span class="o">()</span> <span class="o">{</span>
+  <span class="nv">value</span><span class="o">=</span><span class="si">$(</span>xinput <span class="nt">--list-props</span> <span class="s2">"</span><span class="nv">$TOUCHSCREEN</span><span class="s2">"</span> | <span class="nb">grep</span> <span class="nt">-i</span> <span class="s2">"Device Enabled"</span> | <span class="nb">awk</span> <span class="nt">-F</span>: <span class="s1">'{ print $2 }'</span><span class="si">)</span>
+  <span class="nb">test</span> <span class="nv">$value</span> <span class="nt">-gt</span> 0
+<span class="o">}</span>
+
+<span class="k">if </span>is_enabled<span class="p">;</span> <span class="k">then
+  </span>xinput <span class="nt">--disable</span> <span class="s2">"</span><span class="nv">$TOUCHSCREEN</span><span class="s2">"</span><span class="p">;</span>
+  <span class="nb">echo</span> <span class="o">&gt;</span>&amp;2 <span class="s2">"Touch screen disabled."</span>
+<span class="k">else
+  </span>xinput <span class="nt">--enable</span> <span class="s2">"</span><span class="nv">$TOUCHSCREEN</span><span class="s2">"</span><span class="p">;</span>
+  <span class="nb">echo</span> <span class="o">&gt;</span>&amp;2 <span class="s2">"Touch screen enabled."</span>
+<span class="k">fi</span></code></pre></figure>
+</details>
+
+<h1 id="extending-the-screen">Extending the screen</h1>
+
+<p>When using the graphical interface or <code class="highlighter-rouge">xrandr</code> to extend your screen, you might
+experience some trouble with the touchscreen.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xrandr <span class="nt">--output</span> <span class="s2">"</span><span class="nv">$MAINSCREEN</span><span class="s2">"</span> <span class="nt">--mode</span> <span class="s2">"1920x1080"</span> <span class="nt">--primary</span> <span class="se">\</span>
+       <span class="nt">--output</span> <span class="s2">"</span><span class="nv">$HDMISCREEN</span><span class="s2">"</span> <span class="nt">--mode</span> <span class="s2">"1920x1080"</span> <span class="nt">--right-of</span> <span class="s2">"</span><span class="nv">$MAINSCREEN</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<p>In my case, the touch area gets mapped to the whole display area: if I touch on
+the right part of the touchscreen, it clicks on the right display.</p>
+
+<p>A simple solution to that is to tell <code class="highlighter-rouge">xinput</code> that the touchscreen corresponds
+only to the main display.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xinput map-to-output <span class="s2">"</span><span class="nv">$TOUCHSCREEN</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$MAINSCREEN</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<h1 id="rotating-the-screen">Rotating the screen</h1>
+
+<p>I use <code class="highlighter-rouge">xrandr</code> to rotate the screen in order to use the “tablet” mode.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xrandr <span class="nt">--output</span> <span class="s2">"</span><span class="nv">$MAINSCREEN</span><span class="s2">"</span> <span class="nt">--rotate</span> inverted
+</code></pre></div></div>
+
+<p>However, the touchscreen does not get “rotated” and you can guess that the
+result is a huge mess. This can be solved by using xinput.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xinput set-prop <span class="s2">"</span><span class="nv">$TOUCHSCREEN</span><span class="s2">"</span> <span class="s2">"Coordinate Transformation Matrix"</span> <span class="s2">"-1 0 1 0 -1 1 0 0 1"</span>
+</code></pre></div></div>
+
+<p>Here’s how my script looks like.</p>
+
+<details><summary>Code</summary>
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="c">#!/bin/sh</span>
+<span class="nv">MAINSCREEN</span><span class="o">=</span>eDP-1
+<span class="nv">TOUCHSCREEN</span><span class="o">=</span><span class="s1">'ATML1000:00 E206:5883'</span>
+
+left <span class="o">()</span> <span class="o">{</span>
+  <span class="nv">rotation</span><span class="o">=</span>left
+  <span class="nv">matrix</span><span class="o">=</span><span class="s2">"0 -1 1 1 0 0 0 0 1"</span>
+<span class="o">}</span>
+
+right <span class="o">()</span> <span class="o">{</span>
+  <span class="nv">rotation</span><span class="o">=</span>right
+  <span class="nv">matrix</span><span class="o">=</span><span class="s2">"0 1 0 -1 0 1 0 0 1"</span>
+<span class="o">}</span>
+
+normal <span class="o">()</span> <span class="o">{</span>
+  <span class="nv">rotation</span><span class="o">=</span>normal
+  <span class="nv">matrix</span><span class="o">=</span><span class="s2">"1 0 0 0 1 0 0 0 1"</span>
+<span class="o">}</span>
+
+inverted <span class="o">()</span> <span class="o">{</span>
+  <span class="nv">rotation</span><span class="o">=</span>inverted
+  <span class="nv">matrix</span><span class="o">=</span><span class="s2">"-1 0 1 0 -1 1 0 0 1"</span>
+<span class="o">}</span>
+
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$# </span><span class="nt">-lt</span> 1 <span class="o">]</span><span class="p">;</span> <span class="k">then
+  </span><span class="nb">exit </span>1
+<span class="k">fi</span><span class="p">;</span>
+<span class="nv">$1</span> <span class="o">&amp;&amp;</span> <span class="o">{</span>
+  xrandr <span class="nt">--output</span> <span class="nv">$MAINSCREEN</span> <span class="nt">--rotate</span> <span class="nv">$rotation</span>
+  xinput set-prop <span class="s2">"</span><span class="nv">$TOUCHSCREEN</span><span class="s2">"</span> <span class="s2">"Coordinate Transformation Matrix"</span> <span class="nv">$matrix</span>
+<span class="o">}</span></code></pre></figure>
+</details>
+
+  </section>
+  
+</article>
+
+
+
+      </div>
+
+      <footer class="footer">
+  <span class="footer__copyright">&copy; 2021 Clément Durand. All rights reserved.</span>
+</footer>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+    </div>
+  </body>
+</html>

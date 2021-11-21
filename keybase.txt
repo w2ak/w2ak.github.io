@@ -1,0 +1,56 @@
+==================================================================
+https://keybase.io/neze
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://www.neze.fr
+  * I am neze (https://keybase.io/neze) on keybase.
+  * I have a public key ASDgmyRB22q3C1xfi8j1dBoYVolV7OrQNJxnP4Px03Uuswo
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01205c9d72e985b28dba41baf6294658449ba3008ae1031daec79f857899fb6105500a",
+      "host": "keybase.io",
+      "kid": "0120e09b2441db6ab70b5c5f8bc8f5741a18568955ecead0349c673f83f1d3752eb30a",
+      "uid": "b2976537a7a9246658633bac97202a19",
+      "username": "neze"
+    },
+    "merkle_root": {
+      "ctime": 1637491721,
+      "hash": "65652c26b29e30487bac550be43ae9e7466e559f9abd1d5c82d7d0a3745ba263c39bddc401f537ff2216c5724d2667f2a54b8749c2ba99bdbb9cb1f026719f1b",
+      "hash_meta": "f58e4a1aac46c4915fbe32c212aaf447b9c7269e466dd049257ff8786b27dac8",
+      "seqno": 21271059
+    },
+    "service": {
+      "entropy": "1+7yZtz3aYbUfd3+HkRvACVN",
+      "hostname": "www.neze.fr",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 2
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "5.8.1"
+  },
+  "ctime": 1637491737,
+  "expire_in": 504576000,
+  "prev": "16ac911129546cf50dc6c4ea3c5e491a0306228e08a438464e270234eb2289e5",
+  "seqno": 46,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEg4JskQdtqtwtcX4vI9XQaGFaJVezq0DScZz+D8dN1LrMKp3BheWxvYWTESpcCLsQgFqyRESlUbPUNxsTqPF5JGgMGIo4IpDhGTicCNOsiieXEIA1QNMZ7WeHXl7UTakOjoX0eKnc0qqJiSbFFGog/1oOGAgHCo3NpZ8RA8L3QwEP4kGlJMrozaLxlpE35sTlZ6HhruDptXFN7OCx8oFow2PDRW9XSqt2WGaMqwmQUyUQsPBwmrgA6UfWXA6hzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIMX++pdXVrqi4VuuIdU/u3pBPB689W42b7o7v1DY5n06o3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/neze
+
+==================================================================

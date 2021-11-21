@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+
+  <title>Notes about encrypted storage</title>
+  <meta name="description" content="Notes from the last time I had to create and use an encrypted usb key.
+">
+  <meta name="author" content="Clément Durand">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Notes about encrypted storage">
+  <meta name="twitter:description" content="Notes from the last time I had to create and use an encrypted usb key.
+">
+  
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Notes about encrypted storage">
+  <meta property="og:description" content="Notes from the last time I had to create and use an encrypted usb key.
+">
+
+  <link rel="shortcut icon" href="/images/favicons/favicon.ico">
+  <meta name="msapplication-TileColor" content="#ffc40d">
+  <meta name="msapplication-TileImage" content="/images/favicons/mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://www.neze.fr/2017/cryptodevice/">
+  <link rel="alternate" type="application/rss+xml" title="Hello there!" href="/feed.xml">
+</head>
+
+
+  <body>
+    <span class="mobile btn-mobile-menu">
+  <i class="fas fa-bars btn-mobile-menu__icon"></i>
+  <!--<i class="far fa-times-circle btn-mobile-close__icon hidden"></i>-->
+</span>
+
+<header class="panel-cover" style="background-image: url(/images/cover.jpg)">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="link to home of Hello there!">
+          <img src="/images/profile.png" class="user-image" alt="My Profile Photo">
+          <h1 class="panel-cover__title panel-title">Hello there!</h1>
+        </a>
+        <hr class="panel-cover__divider">
+        <p class="panel-cover__description">My front to the Worst Wild Web</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary">
+
+        <div class="navigation-wrapper">
+          <nav class="cover-navigation">
+            <ul class="navigation">
+              <li class="navigation__item">
+                <a href="/#blog" title="link to Hello there! blog" class="blog-button">Blog</a>
+              </li>
+            </ul>
+          </nav>
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+              
+              <!-- Keybase -->
+              <li class="navigation__item">
+                <a href="https://keybase.io/neze" title="Keybase" target="_blank">
+                  <i class="fab fa-keybase"></i>
+                  <span class="label">Keybase</span>
+                </a>
+              </li>
+              
+              
+              <!-- PGP Key -->
+              <li class="navigation__item">
+                <a href="https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=index&search=0xef2d00c6caa88d40" title="PGP" target="_blank">
+                  <i class="fas fa-fingerprint"></i>
+                  <span class="label">PGP</span>
+                </a>
+              </li>
+              
+              
+              <!-- Email -->
+              <li class="navigation__item">
+                <a href="mailto:clement@neze.fr" title="Email" target="_blank">
+                  <i class="fas fa-envelope"></i>
+                  <span class="label">Email</span>
+                </a>
+              </li>
+              
+              
+              <!-- RSS -->
+              <li class="navigation__item">
+                <a href="/feed.xml" title="Subscribe" target="_blank">
+                  <i class="fas fa-rss"></i>
+                  <span class="label">RSS</span>
+                </a>
+              </li>
+              
+            </ul>
+          </nav>
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+              
+              <!-- Mastodon -->
+              <li class="navigation__item">
+                <a href="https://framapiaf.org/@neze" title="Mastodon" target="_blank">
+                  <i class="fab fa-mastodon"></i>
+                  <span class="label">Mastodon</span>
+                </a>
+              </li>
+              
+              
+              <!-- Twitter -->
+              <li class="navigation__item">
+                <a href="https://twitter.com/neze_drd" title="Twitter" target="_blank">
+                  <i class="fab fa-twitter"></i>
+                  <span class="label">Twitter</span>
+                </a>
+              </li>
+              
+              
+              <!-- Reddit -->
+              <li class="navigation__item">
+                <a href="https://www.reddit.com/user/neze_drd" title="Reddit" target="_blank">
+                  <i class="fab fa-reddit-alien"></i>
+                  <span class="label">Reddit</span>
+                </a>
+              </li>
+              
+              
+              <!-- Facebook -->
+              <li class="navigation__item">
+                <a href="https://www.facebook.com/SaXw2aK" title="Facebook" target="_blank">
+                  <i class="fab fa-facebook-f"></i>
+                  <span class="label">Facebook</span>
+                </a>
+              </li>
+              
+              
+              <!-- Instagram -->
+              <li class="navigation__item">
+                <a href="https://www.instagram.com/neze_drd" title="Instagram" target="_blank">
+                  <i class="fab fa-instagram"></i>
+                  <span class="label">Instagram</span>
+                </a>
+              </li>
+              
+              
+              <!-- Snapchat -->
+              <li class="navigation__item">
+                <a href="https://www.snapchat.com/add/neze_drd" title="Snapchat" target="_blank">
+                  <i class="fab fa-snapchat-ghost"></i>
+                  <span class="label">Snapchat</span>
+                </a>
+              </li>
+              
+              
+              
+              <!-- LinkedIn -->
+              <li class="navigation__item">
+                <a href="https://www.linkedin.com/in/clement-durand" title="LinkedIn" target="_blank">
+                  <i class="fab fa-linkedin-in"></i>
+                  <span class="label">LinkedIn</span>
+                </a>
+              </li>
+              
+              
+              <!-- Omg.lol -->
+              <li class="navigation__item">
+                <a href="https://neze.omg.lol/" title="Omg.lol" target="_blank">
+                  <i class="far fa-grin-squint-tears"></i>
+                  <span class="label">Omg.lol</span>
+                </a>
+              </li>
+              
+              
+              <!-- Git -->
+              <li class="navigation__item">
+                <a href="https://framagit.org/neze" title="Git" target="_blank">
+                  <i class="fab fa-git-alt"></i>
+                  <span class="label">Git</span>
+                </a>
+              </li>
+              
+              
+              <!-- GitHub -->
+              <li class="navigation__item">
+                <a href="https://www.github.com/w2ak" title="GitHub" target="_blank">
+                  <i class="fab fa-github-alt"></i>
+                  <span class="label">GitHub</span>
+                </a>
+              </li>
+              
+              
+              <!-- Git -->
+              <li class="navigation__item">
+                <a href="https://www.gitlab.com/neze" title="GitLab" target="_blank">
+                  <i class="fab fa-gitlab"></i>
+                  <span class="label">GitLab</span>
+                </a>
+              </li>
+              
+            </ul>
+          </nav>
+        </div>
+
+    </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+      <div class="content-wrapper__inner">
+        <article class="post-container post-container--single">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-02-04 00:00" class="post-meta__date date">4 Feb 2017</time>
+      
+      &#8226; <span class="post-meta__tags">on <a href="/tags/#howto">howto</a>, <a href="/tags/#cryptography">cryptography</a></span>
+      
+    </div>
+    <h1 class="post-title">Notes about encrypted storage</h1>
+  </header>
+
+  <section class="post">
+    <p><em>Notes from the last time I had to create and use an encrypted usb key.</em></p>
+
+<hr />
+
+<p>You need to get the name of your device, and of the partition you will create.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">dev</span><span class="o">=</span>sdc
+<span class="nv">part</span><span class="o">=</span>sdc1
+</code></pre></div></div>
+
+<h1 id="creating-a-cryptodevice">Creating a cryptodevice</h1>
+
+<h2 id="create-a-partition-on-the-device">Create a partition on the device</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fdisk /dev/<span class="nv">$dev</span>
+</code></pre></div></div>
+
+<h2 id="format-the-partition-as-luks-encrypted-fs">Format the partition as LUKS encrypted fs</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cryptsetup luksFormat /dev/<span class="nv">$part</span>           <span class="c"># will prompt for a passphrase</span>
+cryptsetup luksFormat /dev/<span class="nv">$part</span> &lt;keyfile&gt; <span class="c"># will use the key file to encrypt</span>
+</code></pre></div></div>
+
+<h2 id="open-the-partition">Open the partition</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cryptsetup luksOpen /dev/<span class="nv">$part</span> <span class="nv">$part</span>
+cryptsetup luksOpen /dev/<span class="nv">$part</span> <span class="nv">$part</span> <span class="nt">--key-file</span><span class="o">=</span>&lt;keyfile&gt;
+</code></pre></div></div>
+
+<p>This creates a virtual partition in <code class="highlighter-rouge">/dev/mapper/$part</code>.</p>
+
+<h2 id="create-a-filesystem-in-the-partition">Create a filesystem in the partition</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkfs.ext4 /dev/mapper/<span class="nv">$part</span>
+</code></pre></div></div>
+
+<h2 id="mount-the-partition">Mount the partition</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /mnt/usb <span class="o">&amp;&amp;</span> mount /dev/mapper/<span class="nv">$part</span> /mnt/usb
+</code></pre></div></div>
+
+<p>You can now use <code class="highlighter-rouge">/mnt/usb</code> as a normal storage device. It will be encrypted on the fly.</p>
+
+<h1 id="opening-a-cryptodevice">Opening a cryptodevice</h1>
+
+<p>Using the last steps of the device creation, the opening becomes :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cryptsetub luksOpen /dev/<span class="nv">$part</span> <span class="nv">$part</span>
+<span class="nb">mkdir</span> <span class="nt">-p</span> /mnt/usb <span class="o">&amp;&amp;</span> mount /dev/mapper/<span class="nv">$part</span> /mnt/usb
+</code></pre></div></div>
+
+<h1 id="closing-a-cryptodevice">Closing a cryptodevice</h1>
+
+<p>To eject your device properly, the cleanest way is to do everything step by step :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>umount /mnt/usb
+cryptsetup luksClose /dev/mapper/<span class="nv">$part</span>
+eject /dev/<span class="nv">$dev</span>
+</code></pre></div></div>
+
+  </section>
+  
+</article>
+
+
+
+      </div>
+
+      <footer class="footer">
+  <span class="footer__copyright">&copy; 2021 Clément Durand. All rights reserved.</span>
+</footer>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+    </div>
+  </body>
+</html>

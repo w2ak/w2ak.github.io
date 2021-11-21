@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+
+  <title>SSH connexions and tunnels</title>
+  <meta name="description" content="Howto notes about opening and using ssh and ssh tunnels.
+">
+  <meta name="author" content="Clément Durand">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="SSH connexions and tunnels">
+  <meta name="twitter:description" content="Howto notes about opening and using ssh and ssh tunnels.
+">
+  
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="SSH connexions and tunnels">
+  <meta property="og:description" content="Howto notes about opening and using ssh and ssh tunnels.
+">
+
+  <link rel="shortcut icon" href="/images/favicons/favicon.ico">
+  <meta name="msapplication-TileColor" content="#ffc40d">
+  <meta name="msapplication-TileImage" content="/images/favicons/mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://www.neze.fr/2017/ssh-connexions-and-tunnels/">
+  <link rel="alternate" type="application/rss+xml" title="Hello there!" href="/feed.xml">
+</head>
+
+
+  <body>
+    <span class="mobile btn-mobile-menu">
+  <i class="fas fa-bars btn-mobile-menu__icon"></i>
+  <!--<i class="far fa-times-circle btn-mobile-close__icon hidden"></i>-->
+</span>
+
+<header class="panel-cover" style="background-image: url(/images/cover.jpg)">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="link to home of Hello there!">
+          <img src="/images/profile.png" class="user-image" alt="My Profile Photo">
+          <h1 class="panel-cover__title panel-title">Hello there!</h1>
+        </a>
+        <hr class="panel-cover__divider">
+        <p class="panel-cover__description">My front to the Worst Wild Web</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary">
+
+        <div class="navigation-wrapper">
+          <nav class="cover-navigation">
+            <ul class="navigation">
+              <li class="navigation__item">
+                <a href="/#blog" title="link to Hello there! blog" class="blog-button">Blog</a>
+              </li>
+            </ul>
+          </nav>
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+              
+              <!-- Keybase -->
+              <li class="navigation__item">
+                <a href="https://keybase.io/neze" title="Keybase" target="_blank">
+                  <i class="fab fa-keybase"></i>
+                  <span class="label">Keybase</span>
+                </a>
+              </li>
+              
+              
+              <!-- PGP Key -->
+              <li class="navigation__item">
+                <a href="https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=index&search=0xef2d00c6caa88d40" title="PGP" target="_blank">
+                  <i class="fas fa-fingerprint"></i>
+                  <span class="label">PGP</span>
+                </a>
+              </li>
+              
+              
+              <!-- Email -->
+              <li class="navigation__item">
+                <a href="mailto:clement@neze.fr" title="Email" target="_blank">
+                  <i class="fas fa-envelope"></i>
+                  <span class="label">Email</span>
+                </a>
+              </li>
+              
+              
+              <!-- RSS -->
+              <li class="navigation__item">
+                <a href="/feed.xml" title="Subscribe" target="_blank">
+                  <i class="fas fa-rss"></i>
+                  <span class="label">RSS</span>
+                </a>
+              </li>
+              
+            </ul>
+          </nav>
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+              
+              <!-- Mastodon -->
+              <li class="navigation__item">
+                <a href="https://framapiaf.org/@neze" title="Mastodon" target="_blank">
+                  <i class="fab fa-mastodon"></i>
+                  <span class="label">Mastodon</span>
+                </a>
+              </li>
+              
+              
+              <!-- Twitter -->
+              <li class="navigation__item">
+                <a href="https://twitter.com/neze_drd" title="Twitter" target="_blank">
+                  <i class="fab fa-twitter"></i>
+                  <span class="label">Twitter</span>
+                </a>
+              </li>
+              
+              
+              <!-- Reddit -->
+              <li class="navigation__item">
+                <a href="https://www.reddit.com/user/neze_drd" title="Reddit" target="_blank">
+                  <i class="fab fa-reddit-alien"></i>
+                  <span class="label">Reddit</span>
+                </a>
+              </li>
+              
+              
+              <!-- Facebook -->
+              <li class="navigation__item">
+                <a href="https://www.facebook.com/SaXw2aK" title="Facebook" target="_blank">
+                  <i class="fab fa-facebook-f"></i>
+                  <span class="label">Facebook</span>
+                </a>
+              </li>
+              
+              
+              <!-- Instagram -->
+              <li class="navigation__item">
+                <a href="https://www.instagram.com/neze_drd" title="Instagram" target="_blank">
+                  <i class="fab fa-instagram"></i>
+                  <span class="label">Instagram</span>
+                </a>
+              </li>
+              
+              
+              <!-- Snapchat -->
+              <li class="navigation__item">
+                <a href="https://www.snapchat.com/add/neze_drd" title="Snapchat" target="_blank">
+                  <i class="fab fa-snapchat-ghost"></i>
+                  <span class="label">Snapchat</span>
+                </a>
+              </li>
+              
+              
+              
+              <!-- LinkedIn -->
+              <li class="navigation__item">
+                <a href="https://www.linkedin.com/in/clement-durand" title="LinkedIn" target="_blank">
+                  <i class="fab fa-linkedin-in"></i>
+                  <span class="label">LinkedIn</span>
+                </a>
+              </li>
+              
+              
+              <!-- Omg.lol -->
+              <li class="navigation__item">
+                <a href="https://neze.omg.lol/" title="Omg.lol" target="_blank">
+                  <i class="far fa-grin-squint-tears"></i>
+                  <span class="label">Omg.lol</span>
+                </a>
+              </li>
+              
+              
+              <!-- Git -->
+              <li class="navigation__item">
+                <a href="https://framagit.org/neze" title="Git" target="_blank">
+                  <i class="fab fa-git-alt"></i>
+                  <span class="label">Git</span>
+                </a>
+              </li>
+              
+              
+              <!-- GitHub -->
+              <li class="navigation__item">
+                <a href="https://www.github.com/w2ak" title="GitHub" target="_blank">
+                  <i class="fab fa-github-alt"></i>
+                  <span class="label">GitHub</span>
+                </a>
+              </li>
+              
+              
+              <!-- Git -->
+              <li class="navigation__item">
+                <a href="https://www.gitlab.com/neze" title="GitLab" target="_blank">
+                  <i class="fab fa-gitlab"></i>
+                  <span class="label">GitLab</span>
+                </a>
+              </li>
+              
+            </ul>
+          </nav>
+        </div>
+
+    </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+      <div class="content-wrapper__inner">
+        <article class="post-container post-container--single">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-01-25 00:00" class="post-meta__date date">25 Jan 2017</time>
+      
+      &#8226; <span class="post-meta__tags">on <a href="/tags/#howto">howto</a>, <a href="/tags/#ssh">ssh</a></span>
+      
+    </div>
+    <h1 class="post-title">SSH connexions and tunnels</h1>
+  </header>
+
+  <section class="post">
+    <p><em>Howto notes about opening and using ssh and ssh tunnels.</em></p>
+
+<hr />
+
+<h2 id="setting-up-a-server">Setting up a server</h2>
+
+<p><em>Describes the setup of a shortcut <code class="highlighter-rouge">deiz</code> to some server. Useful to avoid typing the whole ssh command each time.</em></p>
+
+<p>Assume that you use the following command to connect to deiz:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@neze ~<span class="nv">$ </span>ssh <span class="nt">-p12345</span> <span class="nt">-oIdentityFile</span><span class="o">=</span>~/.ssh/deiz_ecdsa me@deiz.domain.fr
+</code></pre></div></div>
+
+<p>Modify your <code class="highlighter-rouge">.ssh/config</code> file.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Host deiz
+  HostName deiz.domain.fr
+  Port 12345
+  User me
+  IdentityFile ~/.ssh/deiz_ecdsa
+</code></pre></div></div>
+
+<p>Then you’ll be able to connect to <code class="highlighter-rouge">deiz</code> with the command:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@neze ~<span class="nv">$ </span>ssh deiz
+</code></pre></div></div>
+
+<h2 id="connecting-somewhere-through-a-ssh-tunnel">Connecting somewhere through a ssh tunnel</h2>
+
+<p><em>Describes a connection from <code class="highlighter-rouge">neze</code> to <code class="highlighter-rouge">peugeot</code> assuming you have ssh access to <code class="highlighter-rouge">deiz</code>. Useful if <code class="highlighter-rouge">peugeot</code> is accessible from <code class="highlighter-rouge">deiz</code> but not from <code class="highlighter-rouge">neze</code>.</em></p>
+
+<p>Note that you could do this without any new setup with the following ssh command</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@neze ~<span class="nv">$ </span>ssh <span class="nt">-J</span> deiz clement.durand@peugeot.polytechnique.fr
+</code></pre></div></div>
+
+<p>Modify your <code class="highlighter-rouge">.ssh/config</code> file.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Host peugeot
+  HostName peugeot.polytechnique.fr
+  Port 22
+  User clement.durand
+  ProxyCommand ssh -W %h:%p deiz
+</code></pre></div></div>
+
+<p>You can eventually replace the <code class="highlighter-rouge">ProxyCommand</code> instruction with</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ProxyJump deiz
+</code></pre></div></div>
+<p>which actually allows you to setup multiple jumps separated by commas.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@neze ~<span class="nv">$ </span>ssh peugeot
+</code></pre></div></div>
+
+<h2 id="port-forwarding">Port forwarding</h2>
+
+<h3 id="reverse-tunneling">Reverse tunneling</h3>
+
+<p><em>Describes a connection from <code class="highlighter-rouge">neze</code> to <code class="highlighter-rouge">peugeot</code> assuming you have ssh access to <code class="highlighter-rouge">vps</code>. Useful when <code class="highlighter-rouge">peugeot</code> and <code class="highlighter-rouge">neze</code> can access <code class="highlighter-rouge">vps</code> but <code class="highlighter-rouge">vps</code> cannot access them.</em></p>
+
+<p>On the machine you want to access, start a reverse tunnel.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>clement.durand@peugeot ~<span class="nv">$ </span>ssh <span class="nt">-NR</span> 12345:localhost:22 vps
+</code></pre></div></div>
+
+<p>On your computer, setup the connection to go through vps.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Host peugeot
+  HostName localhost
+  Port 12345
+  User clement.durand
+  ProxyCommand ssh -W %h:%p vps
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@neze ~<span class="nv">$ </span>ssh peugeot
+</code></pre></div></div>
+
+<h3 id="tunneling">Tunneling</h3>
+
+<p><em>Describes a connection from <code class="highlighter-rouge">local</code> to <code class="highlighter-rouge">peugeot</code> through <code class="highlighter-rouge">deiz</code> assuming you have ssh access to <code class="highlighter-rouge">deiz</code>, <code class="highlighter-rouge">peugeot</code> is only accessible from <code class="highlighter-rouge">deiz</code>, and the user willing to connect to <code class="highlighter-rouge">peugeot</code> doesn’t have ssh access to <code class="highlighter-rouge">deiz</code>.</em></p>
+
+<p>On the proxy, setup a forwarding.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@deiz ~<span class="nv">$ </span>ssh <span class="nt">-NL</span> 0.0.0.0:12345:peugeot.polytechnique.fr:22 neze@localhost
+</code></pre></div></div>
+
+<p>On the user’s computer, setup the connection to go through deiz.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Host peugeot
+  HostName deiz
+  Port 12345
+  User user
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>user@local ~<span class="nv">$ </span>ssh peugeot
+</code></pre></div></div>
+
+<h3 id="creating-a-socks-proxy">Creating a socks proxy</h3>
+
+<p><em>Describe access to a website from <code class="highlighter-rouge">neze</code>, assuming the website is only accessible from <code class="highlighter-rouge">deiz</code> and you have ssh access to <code class="highlighter-rouge">deiz</code>.</em></p>
+
+<p>On your machine, set up a socks proxy through the distant machine.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@neze ~<span class="nv">$ </span>ssh <span class="nt">-ND</span> 127.0.0.1:8080 deiz
+</code></pre></div></div>
+
+<p>Then, configure your browser to use a <strong>socks 5 proxy on 127.0.0.1:8080</strong>, with <strong>remote DNS</strong>. You will be able to access any website accessible from the distant machine.</p>
+
+<h3 id="notes-about-the--n-option">Notes about the -N option</h3>
+
+<p>The previous sections about port forwarding use the <code class="highlighter-rouge">-N</code> option of ssh. This is useful if you do not want a remote terminal but only to setup a tunnel with port forwarding.</p>
+
+<p>If you also want access to a remote terminal, no need to connect twice to the same server, you can remove the <code class="highlighter-rouge">-N</code> option:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@neze ~<span class="nv">$ </span>ssh <span class="nt">-D</span> 127.0.0.1:8080 deiz
+</code></pre></div></div>
+
+<p>If you do not want a remote terminal, you can also put this process in background with one of the following methods.</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@neze ~<span class="nv">$ </span>screen <span class="nt">-S</span> deiztunnel ssh <span class="nt">-ND</span> 127.0.0.1:8080 deiz
+neze@neze ~<span class="nv">$ </span><span class="nb">exit</span>
+<span class="c"># then later when you want to stop the tunnel</span>
+neze@neze ~<span class="nv">$ </span>screen <span class="nt">-r</span> deiztunnel
+^C
+<span class="o">[</span>screen is terminating]
+neze@neze ~<span class="nv">$ </span><span class="nb">exit</span>
+</code></pre></div></div>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>neze@neze ~<span class="nv">$ </span>ssh <span class="nt">-ND</span> 127.0.0.1:8080 deiz &amp;
+<span class="o">[</span>1] 20043
+neze@neze ~<span class="nv">$ </span><span class="nb">disown
+</span>neze@neze ~<span class="nv">$ </span><span class="nb">exit</span>
+<span class="c"># then later when you want to stop the tunnel</span>
+neze@neze ~<span class="nv">$ </span><span class="nb">kill </span>20043
+</code></pre></div></div>
+
+  </section>
+  
+</article>
+
+
+
+      </div>
+
+      <footer class="footer">
+  <span class="footer__copyright">&copy; 2021 Clément Durand. All rights reserved.</span>
+</footer>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+    </div>
+  </body>
+</html>

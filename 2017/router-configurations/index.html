@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+
+  <title>Router configurations</title>
+  <meta name="description" content="On Wednesday January 25th in class we started a network lab. The aim is to configure a whole network with our personal machines, choosing the address zones and setting up routing and firewall.
+">
+  <meta name="author" content="Clément Durand">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Router configurations">
+  <meta name="twitter:description" content="On Wednesday January 25th in class we started a network lab. The aim is to configure a whole network with our personal machines, choosing the address zones and setting up routing and firewall.
+">
+  
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Router configurations">
+  <meta property="og:description" content="On Wednesday January 25th in class we started a network lab. The aim is to configure a whole network with our personal machines, choosing the address zones and setting up routing and firewall.
+">
+
+  <link rel="shortcut icon" href="/images/favicons/favicon.ico">
+  <meta name="msapplication-TileColor" content="#ffc40d">
+  <meta name="msapplication-TileImage" content="/images/favicons/mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://www.neze.fr/2017/router-configurations/">
+  <link rel="alternate" type="application/rss+xml" title="Hello there!" href="/feed.xml">
+</head>
+
+
+  <body>
+    <span class="mobile btn-mobile-menu">
+  <i class="fas fa-bars btn-mobile-menu__icon"></i>
+  <!--<i class="far fa-times-circle btn-mobile-close__icon hidden"></i>-->
+</span>
+
+<header class="panel-cover" style="background-image: url(/images/cover.jpg)">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="link to home of Hello there!">
+          <img src="/images/profile.png" class="user-image" alt="My Profile Photo">
+          <h1 class="panel-cover__title panel-title">Hello there!</h1>
+        </a>
+        <hr class="panel-cover__divider">
+        <p class="panel-cover__description">My front to the Worst Wild Web</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary">
+
+        <div class="navigation-wrapper">
+          <nav class="cover-navigation">
+            <ul class="navigation">
+              <li class="navigation__item">
+                <a href="/#blog" title="link to Hello there! blog" class="blog-button">Blog</a>
+              </li>
+            </ul>
+          </nav>
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+              
+              <!-- Keybase -->
+              <li class="navigation__item">
+                <a href="https://keybase.io/neze" title="Keybase" target="_blank">
+                  <i class="fab fa-keybase"></i>
+                  <span class="label">Keybase</span>
+                </a>
+              </li>
+              
+              
+              <!-- PGP Key -->
+              <li class="navigation__item">
+                <a href="https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=index&search=0xef2d00c6caa88d40" title="PGP" target="_blank">
+                  <i class="fas fa-fingerprint"></i>
+                  <span class="label">PGP</span>
+                </a>
+              </li>
+              
+              
+              <!-- Email -->
+              <li class="navigation__item">
+                <a href="mailto:clement@neze.fr" title="Email" target="_blank">
+                  <i class="fas fa-envelope"></i>
+                  <span class="label">Email</span>
+                </a>
+              </li>
+              
+              
+              <!-- RSS -->
+              <li class="navigation__item">
+                <a href="/feed.xml" title="Subscribe" target="_blank">
+                  <i class="fas fa-rss"></i>
+                  <span class="label">RSS</span>
+                </a>
+              </li>
+              
+            </ul>
+          </nav>
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+              
+              <!-- Mastodon -->
+              <li class="navigation__item">
+                <a href="https://framapiaf.org/@neze" title="Mastodon" target="_blank">
+                  <i class="fab fa-mastodon"></i>
+                  <span class="label">Mastodon</span>
+                </a>
+              </li>
+              
+              
+              <!-- Twitter -->
+              <li class="navigation__item">
+                <a href="https://twitter.com/neze_drd" title="Twitter" target="_blank">
+                  <i class="fab fa-twitter"></i>
+                  <span class="label">Twitter</span>
+                </a>
+              </li>
+              
+              
+              <!-- Reddit -->
+              <li class="navigation__item">
+                <a href="https://www.reddit.com/user/neze_drd" title="Reddit" target="_blank">
+                  <i class="fab fa-reddit-alien"></i>
+                  <span class="label">Reddit</span>
+                </a>
+              </li>
+              
+              
+              <!-- Facebook -->
+              <li class="navigation__item">
+                <a href="https://www.facebook.com/SaXw2aK" title="Facebook" target="_blank">
+                  <i class="fab fa-facebook-f"></i>
+                  <span class="label">Facebook</span>
+                </a>
+              </li>
+              
+              
+              <!-- Instagram -->
+              <li class="navigation__item">
+                <a href="https://www.instagram.com/neze_drd" title="Instagram" target="_blank">
+                  <i class="fab fa-instagram"></i>
+                  <span class="label">Instagram</span>
+                </a>
+              </li>
+              
+              
+              <!-- Snapchat -->
+              <li class="navigation__item">
+                <a href="https://www.snapchat.com/add/neze_drd" title="Snapchat" target="_blank">
+                  <i class="fab fa-snapchat-ghost"></i>
+                  <span class="label">Snapchat</span>
+                </a>
+              </li>
+              
+              
+              
+              <!-- LinkedIn -->
+              <li class="navigation__item">
+                <a href="https://www.linkedin.com/in/clement-durand" title="LinkedIn" target="_blank">
+                  <i class="fab fa-linkedin-in"></i>
+                  <span class="label">LinkedIn</span>
+                </a>
+              </li>
+              
+              
+              <!-- Omg.lol -->
+              <li class="navigation__item">
+                <a href="https://neze.omg.lol/" title="Omg.lol" target="_blank">
+                  <i class="far fa-grin-squint-tears"></i>
+                  <span class="label">Omg.lol</span>
+                </a>
+              </li>
+              
+              
+              <!-- Git -->
+              <li class="navigation__item">
+                <a href="https://framagit.org/neze" title="Git" target="_blank">
+                  <i class="fab fa-git-alt"></i>
+                  <span class="label">Git</span>
+                </a>
+              </li>
+              
+              
+              <!-- GitHub -->
+              <li class="navigation__item">
+                <a href="https://www.github.com/w2ak" title="GitHub" target="_blank">
+                  <i class="fab fa-github-alt"></i>
+                  <span class="label">GitHub</span>
+                </a>
+              </li>
+              
+              
+              <!-- Git -->
+              <li class="navigation__item">
+                <a href="https://www.gitlab.com/neze" title="GitLab" target="_blank">
+                  <i class="fab fa-gitlab"></i>
+                  <span class="label">GitLab</span>
+                </a>
+              </li>
+              
+            </ul>
+          </nav>
+        </div>
+
+    </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+      <div class="content-wrapper__inner">
+        <article class="post-container post-container--single">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-01-30 00:00" class="post-meta__date date">30 Jan 2017</time>
+      
+      &#8226; <span class="post-meta__tags">on <a href="/tags/#network">network</a>, <a href="/tags/#school">school</a></span>
+      
+    </div>
+    <h1 class="post-title">Router configurations</h1>
+  </header>
+
+  <section class="post">
+    <p><em>On Wednesday January 25th in class we started a network lab. The aim is to configure a whole network with our personal machines, choosing the address zones and setting up routing and firewall.</em></p>
+
+<hr />
+
+<h1 id="map-of-the-network">Map of the network</h1>
+
+<p><img src="/images/network-schema.jpg" alt="The network map" /></p>
+
+<h2 id="internet-access">Internet access</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+<span class="c"># CONFIGURATION</span>
+<span class="nv">inetif</span><span class="o">=</span><span class="s2">"wlan0"</span>
+<span class="nv">locif</span><span class="o">=</span><span class="s2">"eth0"</span>
+<span class="nb">echo</span> <span class="s2">"First, you have to connect to a wifi network allowing access to kuzh"</span>
+<span class="c"># SECURE EVERYTHING</span>
+sysctl net.ipv4.conf.all.forwarding<span class="o">=</span>0
+sysctl net.ipv6.conf.all.disable_ipv6<span class="o">=</span>1
+<span class="c"># SAVE IPTABLES FOR FUTURE RESTORATION</span>
+iptables-save <span class="o">&gt;</span> <span class="s2">"saved-iptables.</span><span class="si">$(</span><span class="nb">date</span> <span class="nt">-Iseconds</span><span class="si">)</span><span class="s2">"</span>
+<span class="c"># BLOCK EVERYTHING</span>
+iptables-restore <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh">
+*raw
+:PREROUTING ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+COMMIT
+*nat
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+COMMIT
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+COMMIT
+</span><span class="no">EOF
+</span><span class="c"># FLUSH LOCAL IFACE</span>
+ip <span class="nb">link set</span> <span class="nv">$locif</span> down
+ip <span class="nb">link set</span> <span class="nv">$locif</span> up
+ip addr flush dev <span class="nv">$locif</span>
+ip route flush dev <span class="nv">$locif</span>
+<span class="c"># ADD ADDRESS AND ROUTES</span>
+ip addr add 10.3.3.1/16 dev <span class="nv">$locif</span>
+ip route add 10.1.0.0/16 via 10.3.1.1
+ip route add 10.2.0.0/16 via 10.3.2.1
+<span class="c"># SETUP NAT AND FIREWALL</span>
+iptables-restore <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh">
+*nat
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+-A POSTROUTING -o </span><span class="nv">$inetif</span><span class="sh"> -s 10.0.0.0/8 -j MASQUERADE
+COMMIT
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+-A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -p tcp -i </span><span class="nv">$locif</span><span class="sh"> --dport 8080 -d 129.104.247.2 -j ACCEPT
+-A FORWARD -p udp -i </span><span class="nv">$locif</span><span class="sh"> --dport 53 -d 129.104.0.0/16 -j ACCEPT
+-A FORWARD -p tcp -i </span><span class="nv">$locif</span><span class="sh"> --dport 993 -d 149.202.54.192 -j ACCEPT
+-A FORWARD -j REJECT
+-A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -j REJECT
+COMMIT
+</span><span class="no">EOF
+</span><span class="c"># ALLOW FORWARDING</span>
+sysctl net.ipv4.conf.all.forwarding<span class="o">=</span>1
+
+</code></pre></div></div>
+
+<h2 id="head-router">Head router</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+<span class="nb">set</span> <span class="nt">-xe</span>
+<span class="nv">LAN</span><span class="o">=</span>enp0s25
+<span class="nv">WAN</span><span class="o">=</span>enp0s29u1u1
+systemctl stop network-manager.sh <span class="o">||</span> <span class="nb">true
+</span>sysctl net.ipv4.conf.all.forwarding<span class="o">=</span>0
+sysctl net.ipv6.conf.all.disable_ipv6<span class="o">=</span>1
+iptables-restore <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT DROP [0:0]
+COMMIT
+*raw
+:PREROUTING ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+COMMIT
+*nat
+:PREROUTING DROP [0:0]
+:POSTROUTING DROP [0:0]
+COMMIT
+</span><span class="no">EOF
+</span><span class="k">for </span>iface <span class="k">in</span> <span class="nv">$LAN</span> <span class="nv">$WAN</span><span class="p">;</span> <span class="k">do
+    </span>ip <span class="nb">link set</span> <span class="nv">$iface</span> down
+    ip <span class="nb">link set</span> <span class="nv">$iface</span> up
+    ip addr flush dev <span class="nv">$iface</span>
+    ip route flush dev <span class="nv">$iface</span>
+<span class="k">done</span><span class="p">;</span>
+ip addr add 10.1.3.1/24 dev <span class="nv">$LAN</span>
+ip addr add 10.3.1.1/16 dev <span class="nv">$WAN</span>
+ip route add 10.1.2.0/24 via 10.1.3.2
+ip route add 10.1.1.0/24 via 10.1.3.3
+ip route add default via 10.3.3.1
+iptables-restore <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT DROP [0:0]
+:die - [0:0]
+-A die -m limit --limit 1/second -j LOG
+-A die -j REJECT --reject-with icmp-admin-prohibited
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -m state --state INVALID -j die
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -j die
+-A FORWARD -i </span><span class="nv">$LAN</span><span class="sh"> -j ACCEPT
+-A FORWARD -d 10.1.1.0/24 -j ACCEPT
+-A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A FORWARD -j die
+-A OUTPUT -j ACCEPT
+COMMIT
+*nat
+:PREROUTING ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+COMMIT
+</span><span class="no">EOF
+</span>sysctl net.ipv4.conf.all.forwarding<span class="o">=</span>1
+<span class="nb">echo</span> <span class="s2">"nameserver 129.104.201.53"</span> <span class="o">&gt;</span> /etc/resolv.conf
+
+</code></pre></div></div>
+
+<h3 id="internal-router-1">Internal router 1</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+</code></pre></div></div>
+
+<h3 id="internal-router-2">Internal router 2</h3>
+
+<p>This one is the router I have been configuring. Here’s the configuration script in its current state.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+msg <span class="o">()</span> <span class="o">{</span>
+  <span class="nb">printf</span> <span class="s2">"%s%s%s</span><span class="se">\n</span><span class="s2">"</span> <span class="s2">"</span><span class="si">$(</span>tput setaf 2<span class="si">)</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$@</span><span class="s2">"</span> <span class="s2">"</span><span class="si">$(</span>tput sgr0<span class="si">)</span><span class="s2">"</span>
+<span class="o">}</span>
+
+getlinks <span class="o">()</span> <span class="o">{</span>
+  ip <span class="nb">link</span> | <span class="nb">grep</span> <span class="s2">"^[0-9]"</span> | <span class="nb">sed</span> <span class="s1">'s/^[^:]*:\s*//; s/:.*$//'</span> | <span class="nb">grep</span> <span class="s2">"^eth"</span>
+<span class="o">}</span>
+
+getmac <span class="o">()</span> <span class="o">{</span>
+  ip <span class="nb">link </span>show <span class="nv">$1</span> | <span class="nb">grep</span> <span class="s2">"link/ether"</span> | <span class="nb">awk</span> <span class="s1">'{ print $2 }'</span>
+<span class="o">}</span>
+
+fw <span class="o">()</span> <span class="o">{</span>
+iptables-restore <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+*nat
+:PREROUTING </span><span class="nv">$1</span><span class="sh"> [0:0]
+:INPUT </span><span class="nv">$1</span><span class="sh"> [0:0]
+:OUTPUT </span><span class="nv">$1</span><span class="sh"> [0:0]
+:POSTROUTING </span><span class="nv">$1</span><span class="sh"> [0:0]
+COMMIT
+*filter
+:INPUT </span><span class="nv">$1</span><span class="sh"> [0:0]
+:FORWARD </span><span class="nv">$1</span><span class="sh"> [0:0]
+:OUTPUT </span><span class="nv">$1</span><span class="sh"> [0:0]
+COMMIT
+</span><span class="no">EOF
+</span><span class="o">}</span>
+
+dnsstatus <span class="o">()</span> <span class="o">{</span>
+  service bind9 status | <span class="nb">grep</span> <span class="s2">"Loaded"</span> | <span class="nb">sed</span> <span class="s1">'s/^[^:]*:\s*//'</span> | <span class="nb">awk</span> <span class="s1">'{ print $1 }'</span>
+<span class="o">}</span>
+
+<span class="c">## LAN CONFIG</span>
+<span class="c"># GET THE LAN IFACE INFOS</span>
+<span class="nv">LAN</span><span class="o">=</span><span class="si">$(</span>getlinks | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s1">'1 p'</span><span class="si">)</span>
+<span class="nv">LAN_MAC</span><span class="o">=</span><span class="si">$(</span>getmac <span class="nv">$LAN</span><span class="si">)</span>
+<span class="c"># CONFIGURE THE LAN ADDRESSES INFOS</span>
+<span class="nv">LAN_IP</span><span class="o">=</span>10.1.2.1
+<span class="nv">LAN_SN</span><span class="o">=</span><span class="nv">$LAN_IP</span>/24 <span class="c"># subnet</span>
+<span class="nv">DNS_IP</span><span class="o">=</span>10.1.2.53
+
+<span class="c">## WAN CONFIG</span>
+<span class="c"># GET THE WAN IFACE INFOS</span>
+<span class="nv">WAN</span><span class="o">=</span><span class="si">$(</span>getlinks | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s1">'2 p'</span><span class="si">)</span>
+<span class="o">[</span> <span class="nt">-n</span> <span class="s2">"</span><span class="nv">$WAN</span><span class="s2">"</span> <span class="o">]</span> <span class="o">||</span> <span class="nb">exit </span>1 <span class="c"># if no wan iface, exit</span>
+<span class="nv">WAN_MAC</span><span class="o">=</span><span class="si">$(</span>getmac <span class="nv">$WAN</span><span class="si">)</span>
+<span class="c"># CONFIGURE THE WAN ADDRESSES INFOS</span>
+<span class="nv">WAN_IP</span><span class="o">=</span>10.1.3.2
+<span class="nv">WAN_SN</span><span class="o">=</span><span class="nv">$WAN_IP</span>/24
+<span class="c"># CONFIGURE THE GATEWAY INFOS (who do I talk to to get to the internet?)</span>
+<span class="nv">GW_IP</span><span class="o">=</span>10.1.3.1
+<span class="nv">LAN1_IP</span><span class="o">=</span>10.1.3.3
+<span class="nv">LAN1_SN</span><span class="o">=</span>10.1.1.0/24
+
+<span class="c">## PROMPT FOR CHECKS</span>
+<span class="nb">printf</span> <span class="s2">"%sLAN card: %s (%s)</span><span class="se">\t</span><span class="s2">WAN card: %s (%s)</span><span class="se">\n</span><span class="s2">OK? [y/n] %s"</span> <span class="se">\</span>
+       <span class="s2">"</span><span class="si">$(</span>tput setaf 1<span class="si">)</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$LAN</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$LAN_MAC</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$WAN</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$WAN_MAC</span><span class="s2">"</span> <span class="s2">"</span><span class="si">$(</span>tput sgr0<span class="si">)</span><span class="s2">"</span>
+<span class="nb">read </span>ans
+<span class="o">[</span> <span class="s2">"x</span><span class="nv">$ans</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">"xy"</span> <span class="o">]</span> <span class="o">||</span> <span class="nb">exit </span>1
+
+<span class="c">## START CONFIGURING THE NETWORK</span>
+<span class="c"># BRING EVERYTHING DOWN</span>
+msg <span class="s2">"Stopping network manager."</span> <span class="o">&amp;&amp;</span>
+    service network-manager stop
+msg <span class="s2">"Bringing links down."</span>      <span class="o">&amp;&amp;</span>
+    <span class="k">for </span>iface <span class="k">in</span> <span class="nv">$LAN</span> <span class="nv">$WAN</span><span class="p">;</span> <span class="k">do </span><span class="nb">echo</span> <span class="nv">$iface</span><span class="p">;</span> ip <span class="nb">link set </span>dev <span class="nv">$iface</span> down<span class="p">;</span> <span class="k">done
+</span>msg <span class="s2">"Flushing ip addresses."</span>    <span class="o">&amp;&amp;</span>
+    <span class="k">for </span>iface <span class="k">in</span> <span class="nv">$LAN</span> <span class="nv">$WAN</span><span class="p">;</span> <span class="k">do </span><span class="nb">echo</span> <span class="nv">$iface</span><span class="p">;</span> ip addr flush dev <span class="nv">$iface</span><span class="p">;</span> <span class="k">done
+</span>msg <span class="s2">"Flushing routes."</span>          <span class="o">&amp;&amp;</span>
+    <span class="k">for </span>iface <span class="k">in</span> <span class="nv">$LAN</span> <span class="nv">$WAN</span><span class="p">;</span> <span class="k">do </span><span class="nb">echo</span> <span class="nv">$iface</span><span class="p">;</span> ip route flush dev <span class="nv">$iface</span><span class="p">;</span> <span class="k">done</span>
+<span class="c"># BRING LINKS BACK UP</span>
+msg <span class="s2">"Bringing links up."</span>        <span class="o">&amp;&amp;</span>
+    <span class="k">for </span>iface <span class="k">in</span> <span class="nv">$LAN</span> <span class="nv">$WAN</span><span class="p">;</span> <span class="k">do </span><span class="nb">echo</span> <span class="nv">$iface</span><span class="p">;</span> ip <span class="nb">link set </span>dev <span class="nv">$iface</span> up<span class="p">;</span> <span class="k">done</span>
+<span class="c"># DISABLE ROUTING</span>
+msg <span class="s2">"Disabling routing."</span>        <span class="o">&amp;&amp;</span>
+    sysctl net.ipv4.conf.all.forwarding<span class="o">=</span>0 <span class="o">&gt;</span>/dev/null
+msg <span class="s2">"Blocking firewall."</span>        <span class="o">&amp;&amp;</span>
+    fw DROP
+<span class="c">#msg "Stopping dns server."      &amp;&amp;</span>
+    <span class="c">#service bind9 stop</span>
+
+<span class="c"># CONFIGURE ADDRESSES AND ROUTES</span>
+msg <span class="s2">"Setting up lan zone."</span>      <span class="o">&amp;&amp;</span>
+    ip addr add <span class="nv">$LAN_SN</span> dev <span class="nv">$LAN</span>
+msg <span class="s2">"Setting up dns address."</span>   <span class="o">&amp;&amp;</span>
+    ip addr add <span class="nv">$DNS_IP</span> dev <span class="nv">$LAN</span>
+msg <span class="s2">"Setting up wan zone."</span>      <span class="o">&amp;&amp;</span>
+    ip addr add <span class="nv">$WAN_SN</span> dev <span class="nv">$WAN</span>
+msg <span class="s2">"Setting up default route."</span> <span class="o">&amp;&amp;</span>
+    ip route add default via <span class="nv">$GW_IP</span>
+msg <span class="s2">"Setting up lan2 route."</span>    <span class="o">&amp;&amp;</span>
+    ip route add <span class="nv">$LAN1_SN</span> via <span class="nv">$LAN1_IP</span>
+
+<span class="c"># ENABLE ROUTING</span>
+msg <span class="s2">"Enabling routing."</span>         <span class="o">&amp;&amp;</span>
+    sysctl net.ipv4.conf.all.forwarding<span class="o">=</span>1 <span class="o">&gt;</span>/dev/null
+msg <span class="s2">"Setting up firewall"</span>       <span class="o">&amp;&amp;</span>
+iptables-restore <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+*nat
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+
+#-A PREROUTING -m limit --limit 30/min -j LOG --log-prefix "iptables nat PREROUTING: " --log-level 7
+
+#-A INPUT -m limit --limit 30/min -j LOG --log-prefix "iptables nat INPUT: " --log-level 7
+
+#-A OUTPUT -m limit --limit 30/min -j LOG --log-prefix "iptables nat OUTPUT: " --log-level 7
+
+#-A POSTROUTING -m limit --limit 30/min -j LOG --log-prefix "iptables nat POSTROUTING: " --log-level 7
+
+COMMIT
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+:LOGINVALID - [0:0]
+
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p icmp -m limit --limit 2/sec -j ACCEPT
+-A INPUT -d </span><span class="nv">$DNS_IP</span><span class="sh"> -p udp -m udp --dport 53 -j ACCEPT
+-A INPUT -d </span><span class="nv">$LAN_IP</span><span class="sh"> -p tcp -m tcp --dport 22 -j ACCEPT
+-A INPUT -m state --state INVALID -j LOGINVALID
+-A INPUT -m limit --limit 30/min -j LOG --log-prefix "iptables filter INPUT: " --log-level 7
+-A INPUT -j REJECT --reject-with icmp-port-unreachable
+
+-A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -i </span><span class="nv">$LAN</span><span class="sh"> -o </span><span class="nv">$WAN</span><span class="sh"> -s </span><span class="nv">$LAN_SN</span><span class="sh"> -j ACCEPT
+-A FORWARD -i </span><span class="nv">$WAN</span><span class="sh"> -o </span><span class="nv">$LAN</span><span class="sh"> -d </span><span class="nv">$LAN_SN</span><span class="sh"> -p tcp --dport 22 -j ACCEPT
+-A FORWARD -m state --state INVALID -j LOGINVALID
+-A FORWARD -m limit --limit 30/min -j LOG --log-prefix "iptables filter FORWARD: " --log-level 7
+-A FORWARD -j REJECT --reject-with icmp-port-unreachable
+
+-A OUTPUT -m state --state INVALID -j LOGINVALID
+#-A OUTPUT -m limit --limit 30/min -j LOG --log-prefix "iptables filter OUTPUT: " --log-level 7
+
+-A LOGINVALID -m limit --limit 30/min -j LOG --log-prefix "iptables filter INVALID: " --log-level 7
+-A LOGINVALID -j DROP
+
+COMMIT
+</span><span class="no">EOF
+
+</span><span class="c"># SET UP WEB ACCESS</span>
+msg <span class="s2">"Setting up dns servers."</span>   <span class="o">&amp;&amp;</span>
+<span class="nb">cat</span> <span class="o">&gt;</span> /etc/resolv.conf <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+search inf586 eleves.polytechnique.fr polytechnique.fr
+nameserver 10.1.2.53
+</span><span class="no">EOF
+
+</span><span class="c"># SET UP DNS SERVER</span>
+msg <span class="s2">"Setting up dns options."</span>   <span class="o">&amp;&amp;</span>
+<span class="nb">cat</span> <span class="o">&gt;</span> /etc/bind/named.conf.options <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+options {
+  directory "/var/cache/bind";
+  recursion yes;
+  forwarders {
+    129.104.201.53;
+    129.104.201.51;
+    129.104.32.41;
+    129.104.30.41;
+  };
+  dnssec-validation auto;
+  auth-nxdomain no;
+  listen-on-v6 { any; };
+};
+</span><span class="no">EOF
+</span>msg <span class="s2">"Setting up dns zones."</span>     <span class="o">&amp;&amp;</span>
+<span class="nb">cat</span> <span class="o">&gt;</span> /etc/bind/named.conf.default-zones <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+zone "." {
+  type hint;
+  file "/etc/bind/db.root";
+};
+zone "localhost" {
+  type master;
+  file "/etc/bind/db.local";
+};
+zone "inf586" {
+  type master;
+  file "/etc/bind/db.inf586";
+};
+zone "127.in-addr.arpa" {
+  type master;
+  file "/etc/bind/db.127";
+};
+zone "0.in-addr.arpa" {
+  type master;
+  file "/etc/bind/db.0";
+};
+zone "255.in-addr.arpa" {
+  type master;
+  file "/etc/bind/db.255";
+};
+zone "10.in-addr.arpa" {
+  type master;
+  file "/etc/bind/db.10";
+};
+</span><span class="no">EOF
+</span>msg <span class="s2">"Setting up dns resolution."</span> <span class="o">&amp;&amp;</span>
+<span class="nb">cat</span> <span class="o">&gt;</span> /etc/bind/db.inf586 <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+</span><span class="se">\$</span><span class="sh">TTL 604800
+@ IN  SOA inf586. root.inf586. (
+      </span><span class="si">$(</span><span class="nb">date</span> +%m%d%H%M%S<span class="si">)</span><span class="sh">   ; Serial
+       604800   ; Refresh
+        86400   ; Retry
+      2419200   ; Expire
+       604800 ) ; Negative Cache TTL
+;
+@ IN  NS  inf586.
+@ IN  A 10.1.2.53
+
+internet-in IN  A 10.3.3.1
+
+head-router-out IN  A 10.3.1.1
+www IN  CNAME head-router-out
+head-router-in  IN  A 10.1.3.1
+head-router-client IN A 10.1.3.86
+
+internal-router-1-out IN A 10.1.3.3
+internal-router-1-in IN A 10.1.1.1
+internal-router-1-client IN A 10.1.1.86
+
+internal-router-2-out IN A 10.1.3.2
+internal-router-2-in IN A 10.1.2.1
+internal-router-2-client IN A 10.1.2.86
+vizier  IN  CNAME internal-router-2-client
+nameserver IN A 10.1.2.53
+
+isp-head-out  IN  A 10.3.2.1
+isp-head-in IN  A 10.2.1.1
+
+box-1-out IN  A 10.2.1.2
+box-2-out IN  A 10.2.1.3
+</span><span class="no">EOF
+</span>msg <span class="s2">"Setting up dns reverse."</span>    <span class="o">&amp;&amp;</span>
+<span class="nb">cat</span> <span class="o">&gt;</span> /etc/bind/db.10 <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+</span><span class="se">\$</span><span class="sh">TTL 604800
+@ IN  SOA inf586. root.inf586. (
+      </span><span class="si">$(</span><span class="nb">date</span> +%m%d%H%M%S<span class="si">)</span><span class="sh">   ; Serial
+       604800   ; Refresh
+        86400   ; Retry
+      2419200   ; Expire
+       604800 ) ; Negative Cache TTL
+;
+@ IN  NS  inf586.
+1.3.3 IN  PTR internet-in
+
+1.1.3 IN  PTR head-router-out
+1.3.1 IN  PTR head-router-in
+
+3.3.1 IN  PTR internal-router-1-out
+1.1.1 IN  PTR internal-router-1-in
+86.1.1  IN  PTR internal-router-1-client
+
+2.3.1 IN  PTR internal-router-2-out
+1.2.1 IN  PTR internal-router-2-in
+86.2.1  IN  PTR internal-router-2-client
+53.2.1  IN  PTR nameserver
+
+1.2.3 IN  PTR isp-head-out
+1.1.2 IN  PTR isp-head-in
+
+2.1.2 IN  PTR box-1-out
+3.1.2 IN  PTR box-2-out
+</span><span class="no">EOF
+</span>msg <span class="s2">"Starting dns server."</span>      <span class="o">&amp;&amp;</span> service bind9 restart
+
+<span class="c"># SET UP USER CONFIG</span>
+<span class="nv">uconfname</span><span class="o">=</span><span class="si">$(</span><span class="nb">mktemp</span><span class="si">)</span>
+<span class="nb">cat</span> <span class="o">&gt;</span> <span class="nv">$uconfname</span> <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+export http_proxy='http://129.104.247.2:8080/'
+export https_proxy=</span><span class="se">\$</span><span class="sh">http_proxy
+export vizier=10.1.2.86
+export durand=10.1.3.2
+export girol=10.1.3.1
+export gaspard=10.3.3.1
+export burns=10.1.3.3
+
+export kuzh=129.104.247.2
+export frankiz=129.104.201.51
+</span><span class="no">EOF
+</span>msg <span class="s2">"If you want to use the user configuration, just do </span><span class="se">\`</span><span class="s2">source </span><span class="nv">$uconfname</span><span class="se">\`</span><span class="s2">."</span>
+
+</code></pre></div></div>
+
+<h2 id="isp-head">ISP Head</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+</code></pre></div></div>
+
+<h3 id="box-1">Box 1</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+<span class="nv">INET_IFACE</span><span class="o">=</span>eth0
+<span class="nv">INET_IP</span><span class="o">=</span><span class="s2">"10.2.1.3"</span>
+<span class="nv">INTERNAL_IFACE</span><span class="o">=</span>eth1
+<span class="nv">INTERNAL_IP</span><span class="o">=</span><span class="s2">"10.2.3.1"</span>
+<span class="c"># Structure of this script</span>
+<span class="c"># 1. Fresh start</span>
+<span class="c">#       1.1.    disable network manager</span>
+<span class="c">#       1.2.    disable routing</span>
+<span class="c">#       1.3.    delete routes</span>
+<span class="c">#       1.4.    delete ip addresses</span>
+<span class="c"># 2. Setting routes</span>
+<span class="c">#       2.1.    setup ip addresses</span>
+<span class="c">#       2.2.    setup route to local link</span>
+<span class="c">#       2.3.    setup route through gateways</span>
+<span class="c"># 3. Setup firewall</span>
+<span class="c"># 4. Enable routing</span>
+<span class="c">#======================================================================</span>
+<span class="c">#       Fresh Start</span>
+<span class="c">#======================================================================</span>
+<span class="c">#       1.1.    disable network manager</span>
+<span class="nb">sudo </span>service network-manager stop
+<span class="c">#       1.2.    disable routing</span>
+sysctl <span class="nt">-w</span> net.ipv4.ip_forward<span class="o">=</span>0
+<span class="c">#       1.3.    delete routes</span>
+ip route flush
+<span class="c">#       1.4.    delete ip addresses</span>
+<span class="nb">echo</span> <span class="s2">"Please delete previous IP Addresses"</span>
+<span class="c">#======================================================================</span>
+<span class="c">#       Setting Routes</span>
+<span class="c">#======================================================================</span>
+<span class="c">#       2.1.    setup ip addresses</span>
+<span class="c">#       2.2.    setup route to local link</span>
+ip addr add <span class="nv">$INET_IP</span>/24 dev <span class="nv">$INET_IFACE</span>
+ip addr add <span class="nv">$INTERNAL_IP</span>/24 dev <span class="nv">$INTERNAL_IFACE</span>
+<span class="c">#       2.3.    setup route through gateways</span>
+ip route add 0.0.0.0/0 via 10.2.1.1 dev <span class="nv">$INET_IFACE</span>
+<span class="c">#======================================================================</span>
+<span class="c">#       Setup Firewall</span>
+<span class="c">#======================================================================</span>
+<span class="c">#======================================================================</span>
+<span class="c">#       Enable Routing</span>
+<span class="c">#======================================================================</span>
+sysctl <span class="nt">-w</span> net.ipv4.ip_forward<span class="o">=</span>1
+
+</code></pre></div></div>
+
+<h3 id="box-2">Box 2</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+</code></pre></div></div>
+
+<h1 id="notes">Notes</h1>
+
+<h2 id="addresses-configuration">Addresses configuration</h2>
+
+<p><em>Attribute an IP address to an interface.</em></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip <span class="nb">link set </span>eth0 down
+ip addr flush dev eth0
+ip addr add dev eth0 192.168.1.42/24
+ip <span class="nb">link set </span>eth0 up
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip addr list dev eth0
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sysctl <span class="nt">-w</span> net.ipv4.ip_forward<span class="o">=</span>1 <span class="c"># or 0</span>
+</code></pre></div></div>
+
+<h2 id="routes-configuration">Routes configuration</h2>
+
+<p><em>Show routes</em></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip route show
+route <span class="nt">-n</span>
+</code></pre></div></div>
+
+<p><em>Add routes</em></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip route add 192.168.1.0/24 dev eth0      <span class="c"># one hop</span>
+ip route add 10.1.0.0/16 via 192.168.1.69 <span class="c"># gateway</span>
+ip route add default via 192.168.1.1      <span class="c"># default</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip route flush dev eth0
+</code></pre></div></div>
+
+  </section>
+  
+</article>
+
+
+
+      </div>
+
+      <footer class="footer">
+  <span class="footer__copyright">&copy; 2021 Clément Durand. All rights reserved.</span>
+</footer>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+    </div>
+  </body>
+</html>
